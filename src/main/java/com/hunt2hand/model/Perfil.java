@@ -27,10 +27,13 @@ public class  Perfil
     private String apellido;
 
     @Column(name = "ubicacion")
-    private String email;
+    private String ubicacion;
 
     @Column(name = "imagen")
     private String imagen;
+
+    @Column(name = "baneado")
+    private boolean baneado;
 
     @OneToOne
     @JoinColumn(name = "id_usuario", nullable = false)

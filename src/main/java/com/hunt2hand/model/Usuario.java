@@ -30,6 +30,7 @@ public class  Usuario
 
     @Column(name = "rol")
     private Rol rol;
+
 }
 
 
