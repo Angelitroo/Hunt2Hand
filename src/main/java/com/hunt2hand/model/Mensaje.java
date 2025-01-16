@@ -22,12 +22,12 @@ public class Mensaje {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "id_chat", nullable = false)
-    private Chat chat;
+    @JoinColumn(name = "id_emisor", nullable = false)
+    private Perfil emisor;
 
     @ManyToOne
-    @JoinColumn(name = "id_perfil", nullable = false)
-    private Perfil perfil;
+    @JoinColumn(name = "id_receptor", nullable = false)
+    private Perfil receptor;
 
     @Column(name = "mensaje")
     private String mensaje;
