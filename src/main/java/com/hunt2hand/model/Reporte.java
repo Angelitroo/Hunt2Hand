@@ -4,14 +4,14 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "seguidores", schema = "hunt2hand")
+@Table(name = "reporte", schema = "hunt2hand")
 @Getter
 @Setter
 @EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class Seguidores {
+public class Reporte {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -19,12 +19,14 @@ public class Seguidores {
 
     @Id
     @ManyToOne
-    @JoinColumn(name = "id_seguidor")
-    private Perfil seguidor;
+    @JoinColumn(name = "id_reportador")
+    private Perfil reportador;
 
     @Id
     @ManyToOne
-    @JoinColumn(name = "id_seguido")
-    private Perfil seguido;
+    @JoinColumn(name = "id_reportado")
+    private Perfil reportado;
 
+    @Column(name = "motivo")
+    private String motivo;
 }

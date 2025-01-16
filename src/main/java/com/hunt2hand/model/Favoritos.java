@@ -3,28 +3,26 @@ package com.hunt2hand.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+
 @Entity
-@Table(name = "seguidores", schema = "hunt2hand")
+@Table(name = "favoritos", schema = "hunt2hand")
 @Getter
 @Setter
 @EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class Seguidores {
+public class Favoritos {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
-    @Id
     @ManyToOne
-    @JoinColumn(name = "id_seguidor")
-    private Perfil seguidor;
+    @JoinColumn(name = "id_perfil", nullable = false)
+    private Perfil perfil;
 
-    @Id
-    @ManyToOne
-    @JoinColumn(name = "id_seguido")
-    private Perfil seguido;
-
+    @OneToOne
+    @JoinColumn(name = "id_producto", nullable = false)
+    private Producto producto;
 }
