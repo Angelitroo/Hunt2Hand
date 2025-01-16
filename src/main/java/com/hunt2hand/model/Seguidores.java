@@ -20,11 +20,11 @@ public class Seguidores {
     @Id
     @ManyToOne
     @JoinColumn(name = "id_seguidor")
-    private Usuario seguidor;
+    private Perfil seguidor;
 
     @Id
     @ManyToOne
     @JoinColumn(name = "id_seguido")
-    private Usuario seguido;
+    private Perfil seguido;
 
 }
