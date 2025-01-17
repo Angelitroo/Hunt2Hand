@@ -13,8 +13,7 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 
-public class  Perfil
-{
+public class  Perfil {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")

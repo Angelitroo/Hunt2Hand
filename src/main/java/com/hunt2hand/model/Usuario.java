@@ -4,14 +4,12 @@ package com.hunt2hand.model;
 import com.hunt2hand.enums.Rol;
 import jakarta.persistence.*;
 import lombok.*;
-import org.apache.catalina.UserDatabase;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 
 @Entity
@@ -29,15 +27,15 @@ public class Usuario implements UserDetails
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "email")
-    private String email;
+    @Column(name = "username")
+    private String username;
 
-    @Column(name = "contraseña")
-    private String contraseña;
+    @Column(name = "password")
+    private String password;
 
     @Column(name = "rol")
     private Rol rol;
-
+    
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singletonList(new SimpleGrantedAuthority(this.rol.name()));
@@ -72,6 +70,7 @@ public class Usuario implements UserDetails
     public boolean isEnabled() {
         return UserDetails.super.isEnabled();
     }
+
 }
 
 
