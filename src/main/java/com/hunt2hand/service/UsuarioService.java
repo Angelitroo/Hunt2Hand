@@ -20,31 +20,34 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-
 @Service
 @AllArgsConstructor
 public class UsuarioService implements UserDetailsService {
 
-
-    private UsuarioRepository usuarioRepository;
-    private PerfilService perfilService;
+    private final UsuarioRepository usuarioRepository;
+    private final PerfilService perfilService;
     private final PasswordEncoder passwordEncoder;
-    private JWTService jwtService;
+    private final JWTService jwtService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return usuarioRepository.findTopByUsername(username).orElse(null);
+        return usuarioRepository.findTopByUsername(username).orElseThrow(() ->
+                new UsernameNotFoundException("Usuario no encontrado con el nombre: " + username));
     }
 
+    public Usuario registrarUsuario(RegistroDTO dto) {
+        // Verificar si el username ya existe
+        if (usuarioRepository.findTopByUsername(dto.getUsername()).isPresent()) {
+            throw new IllegalArgumentException("El nombre de usuario '" + dto.getUsername() + "' ya está en uso.");
+        }
 
-    public Usuario registrarUsuario(RegistroDTO dto){
-
+        // Crear el usuario
         Usuario nuevoUsuario = new Usuario();
         nuevoUsuario.setUsername(dto.getUsername());
         nuevoUsuario.setPassword(passwordEncoder.encode(dto.getPassword()));
-        nuevoUsuario.setRol(Rol.USER);
+        nuevoUsuario.setRol(dto.getRol());
 
-
+        // Crear el perfil asociado
         Perfil perfil = new Perfil();
         perfil.setNombre(dto.getNombre());
         perfil.setApellido(dto.getApellido());
@@ -52,20 +55,15 @@ public class UsuarioService implements UserDetailsService {
         perfil.setImagen(dto.getUsername());
         perfil.setBaneado(dto.isBaneado());
 
-
+        // Guardar usuario y perfil
         Usuario usuarioGuardado = usuarioRepository.save(nuevoUsuario);
-
-
         perfil.setUsuario(usuarioGuardado);
-        Perfil perfilGuardado = perfilService.guardarPerfil(perfil);
-
+        perfilService.guardarPerfil(perfil);
 
         return usuarioGuardado;
     }
 
-
-    public ResponseEntity<RespuestaDTO> login(LoginDTO dto){
-
+    public ResponseEntity<RespuestaDTO> login(LoginDTO dto) {
         // Buscar usuario por nombre de usuario
         Optional<Usuario> usuarioOpcional = usuarioRepository.findTopByUsername(dto.getUsername());
 
@@ -88,12 +86,5 @@ public class UsuarioService implements UserDetailsService {
         } else {
             throw new UsernameNotFoundException("Usuario no encontrado");
         }
-
     }
-
-
-
-
-
-
 }

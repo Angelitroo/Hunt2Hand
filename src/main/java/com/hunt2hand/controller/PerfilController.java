@@ -9,14 +9,14 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/perfiles")
+@RequestMapping("/perfiles")
 public class PerfilController {
 
     @Autowired
     private PerfilService perfilService;
 
     // Obtener todos los perfiles
-    @GetMapping
+    @GetMapping("/")
     public ResponseEntity<List<Perfil>> obtenerTodosLosPerfiles() {
         return ResponseEntity.ok(perfilService.obtenerTodosLosPerfiles());
     }

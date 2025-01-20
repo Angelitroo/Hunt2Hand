@@ -31,19 +31,15 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(req -> req.requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/publicacion/**").hasAuthority("PERFIL")
-                        .requestMatchers("/aptitud/**").hasAuthority("ADMIN")
-                        .anyRequest().authenticated())
+                .authorizeHttpRequests(req -> req
+                        .requestMatchers("/auth/**").permitAll() // Permitir acceso sin autenticación a /auth/**
+                        .requestMatchers("/perfiles/**").hasAnyAuthority("PERFIL", "ADMIN") // Acceso a /perfiles/** para PERFIL o ADMIN
+                        .anyRequest().authenticated() // Cualquier otra solicitud requiere autenticación
+                )
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtFilterChain, UsernamePasswordAuthenticationFilter.class)
-                .exceptionHandling((exception) -> exception.accessDeniedHandler(accessDeniedHandler()))
-        ;
-
+                .exceptionHandling(exception -> exception.accessDeniedHandler(accessDeniedHandler()));
 
         return http.build();
-
     }
-
-
 }

@@ -27,7 +27,7 @@ public class Usuario implements UserDetails
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "username")
+    @Column(name = "username", unique = true, nullable = false)
     private String username;
 
     @Column(name = "password")

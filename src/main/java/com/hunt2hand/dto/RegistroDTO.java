@@ -1,5 +1,7 @@
 package com.hunt2hand.dto;
 
+import com.hunt2hand.enums.Rol;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Data;
 
@@ -14,8 +16,9 @@ public class RegistroDTO {
     private boolean baneado = false;
 
     // TABLA USUARIO
+    @NotBlank(message = "El nombre de usuario no puede estar vacío.")
     private String username;
     private String password;
-    private String rol;
+    private Rol rol;
 
 }
