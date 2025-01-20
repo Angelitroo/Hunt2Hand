@@ -11,6 +11,7 @@ import org.springframework.validation.annotation.Validated;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -124,6 +125,33 @@ public class PerfilService {
 
     public Perfil guardarPerfil(Perfil perfil) {
         return perfilRepository.save(perfil);
+    }
+
+    // Obtener todos los perfiles
+    public List<Perfil> obtenerTodosLosPerfiles() {
+        return perfilRepository.findAll();
+    }
+
+    // Buscar un perfil por username
+    public Optional<Perfil> buscarPorUsername(String username) {
+        return perfilRepository.findByUsuarioUsername(username);
+    }
+
+    // Eliminar un perfil por su ID
+    public void eliminarPerfil(Long id) {
+        perfilRepository.deleteById(Math.toIntExact(id));
+    }
+
+    // Modificar un perfil existente
+    public Perfil modificarPerfil(Long id, Perfil perfilModificado) {
+        return perfilRepository.findById(Math.toIntExact(id)).map(perfil -> {
+            perfil.setNombre(perfilModificado.getNombre());
+            perfil.setApellido(perfilModificado.getApellido());
+            perfil.setUbicacion(perfilModificado.getUbicacion());
+            perfil.setImagen(perfilModificado.getImagen());
+            perfil.setBaneado(perfilModificado.isBaneado());
+            return perfilRepository.save(perfil);
+        }).orElseThrow(() -> new IllegalArgumentException("Perfil no encontrado con ID: " + id));
     }
 
 

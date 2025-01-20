@@ -67,13 +67,13 @@ public class UsuarioService implements UserDetailsService {
     public ResponseEntity<RespuestaDTO> login(LoginDTO dto){
 
         // Buscar usuario por nombre de usuario
-        Optional<Usuario> usuarioOpcional = usuarioRepository.findTopByUsername(dto.getEmail());
+        Optional<Usuario> usuarioOpcional = usuarioRepository.findTopByUsername(dto.getUsername());
 
         if (usuarioOpcional.isPresent()) {
             Usuario usuario = usuarioOpcional.get();
 
             // Verificar la contraseña
-            if (passwordEncoder.matches(dto.getContraseña(), usuario.getPassword())) {
+            if (passwordEncoder.matches(dto.getPassword(), usuario.getPassword())) {
 
                 // Contraseña válida, devolver token de acceso
                 String token = jwtService.generateToken(usuario);

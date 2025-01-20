@@ -17,9 +17,8 @@ public interface PerfilRepository extends JpaRepository<Perfil, Integer> {
             "OR LOWER(p.apellido) LIKE LOWER(CONCAT('%', :busqueda, '%'))")
     List<Perfil> buscar(@Param("busqueda") String busqueda);
 
-
-    @Query(value = "select count(*) from safajobs.empresa e  where es_tecnologica = false", nativeQuery = true )
-    Integer getNumeroEmpresasNoTecnologicas();
+    @Query("SELECT p FROM Perfil p WHERE p.usuario.username = :username")
+    Optional<Perfil> findByUsuarioUsername(@Param("username") String username);
 
 
 }
