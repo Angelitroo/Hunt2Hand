@@ -11,8 +11,6 @@ import java.util.Optional;
 
 @Repository
 public interface PerfilRepository extends JpaRepository<Perfil, Integer> {
-
-
     @Query("SELECT p FROM Perfil p WHERE LOWER(p.nombre) LIKE LOWER(CONCAT('%', :busqueda, '%')) " +
             "OR LOWER(p.apellido) LIKE LOWER(CONCAT('%', :busqueda, '%'))")
     List<Perfil> buscar(@Param("busqueda") String busqueda);

@@ -61,6 +61,7 @@ public class Usuario implements UserDetails
         return UserDetails.super.isEnabled();
     }
 
+
 }
 
 
