@@ -24,6 +24,9 @@ public class Producto {
     @Column(name = "nombre")
     private String nombre;
 
+    @Column(name = "categoria")
+    private String categoria;
+
     @Column(name = "descripcion")
     private String descripcion;
 

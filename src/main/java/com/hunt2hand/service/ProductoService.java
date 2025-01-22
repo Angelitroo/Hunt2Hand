@@ -1,15 +1,14 @@
 package com.hunt2hand.service;
 
 import com.hunt2hand.dto.ProductoDTO;
+import com.hunt2hand.dto.ReporteDTO;
 import com.hunt2hand.model.Producto;
+import com.hunt2hand.model.Reporte;
 import com.hunt2hand.repository.ProductoRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,6 +37,24 @@ public class ProductoService {
             return dto;
         })
         .collect(Collectors.toList());
+    }
+
+    public Set<ProductoDTO> getProductoByCategoria(String categoria) {
+        Set<ProductoDTO> productoDTOS = new HashSet<>();
+        for (Producto producto : productoRepository.findByCategoria(categoria)) {
+            ProductoDTO productoDTO = new ProductoDTO();
+            productoDTO.setId(producto.getId());
+            productoDTO.setNombre(producto.getNombre());
+            productoDTO.setCategoria(producto.getCategoria());
+            productoDTO.setDescripcion(producto.getDescripcion());
+            productoDTO.setPrecio(producto.getPrecio());
+            productoDTO.setEstado(producto.getEstado().name());
+            productoDTO.setImagen(producto.getImagen());
+            productoDTO.setVendido(producto.getVendido());
+            productoDTO.setPerfil(producto.getPerfil().getId());
+            productoDTOS.add(productoDTO);
+        }
+        return productoDTOS;
     }
 
     public ProductoDTO getById(Long id) {
