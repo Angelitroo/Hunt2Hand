@@ -32,7 +32,7 @@ public class ReporteController {
         return ResponseEntity.ok(reporteCreado);
     }
 
-    @DeleteMapping("eliminar/{id}")
+    @DeleteMapping("eliminarmio/{id}")
     public ResponseEntity<Void> eliminarMiReporte(@PathVariable Long id) {
         reporteService.eliminarMiReporte(id);
         return ResponseEntity.noContent().build();
