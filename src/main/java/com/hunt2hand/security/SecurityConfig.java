@@ -34,6 +34,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(req -> req
                         .requestMatchers("/auth/**").permitAll() // Permitir acceso sin autenticación a /auth/**
                         .requestMatchers("/perfiles/**").hasAnyAuthority("PERFIL", "ADMIN") // Acceso a /perfiles/** para PERFIL o ADMIN
+                        .requestMatchers("/productos/**").hasAnyAuthority("PERFIL", "ADMIN")
                         .anyRequest().authenticated() // Cualquier otra solicitud requiere autenticación
                 )
                 .authenticationProvider(authenticationProvider)
