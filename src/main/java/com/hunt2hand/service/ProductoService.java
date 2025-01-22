@@ -9,7 +9,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -77,6 +79,24 @@ public class ProductoService {
         dto.setVendido(producto.getVendido());
         dto.setPerfil(producto.getPerfil().getId());
         return dto;
+    }
+
+    public Set<ProductoDTO> getByCategoria(String categoria) {
+        Set<ProductoDTO> productoDTOS = new HashSet<>();
+        for (Producto producto : productoRepository.findByCategoria(categoria)) {
+            ProductoDTO productoDTO = new ProductoDTO();
+            productoDTO.setId(producto.getId());
+            productoDTO.setNombre(producto.getNombre());
+            productoDTO.setCategoria(producto.getCategoria());
+            productoDTO.setDescripcion(producto.getDescripcion());
+            productoDTO.setPrecio(producto.getPrecio());
+            productoDTO.setEstado(producto.getEstado());
+            productoDTO.setImagen(producto.getImagen());
+            productoDTO.setVendido(producto.getVendido());
+            productoDTO.setPerfil(producto.getPerfil().getId());
+            productoDTOS.add(productoDTO);
+        }
+        return productoDTOS;
     }
 
     public ProductoDTO guardar(ProductoDTO productoDTO, Long idPerfil) {
