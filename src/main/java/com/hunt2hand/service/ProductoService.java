@@ -18,7 +18,7 @@ public class ProductoService {
     private final ProductoRepository productoRepository;
     private final PerfilRepository perfilRepository;
 
-    public List<ProductoDTO> getAll(Producto producto) {
+    public List<ProductoDTO> getAll() {
         List<Producto> productos = productoRepository.findAll();
 
         if (productos == null) {

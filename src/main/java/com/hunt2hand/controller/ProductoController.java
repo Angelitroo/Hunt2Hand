@@ -19,8 +19,8 @@ public class ProductoController {
     private ProductoService productoService;
 
     @GetMapping("/")
-    public List<ProductoDTO> getAll(@RequestBody Producto producto) {
-        return productoService.getAll(producto);
+    public List<ProductoDTO> getAll() {
+        return productoService.getAll();
     }
 
     @GetMapping({"/{id}"})
