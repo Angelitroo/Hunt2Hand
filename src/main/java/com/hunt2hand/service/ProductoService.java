@@ -60,8 +60,8 @@ public class ProductoService {
         return dto;
     }
 
-    public ProductoDTO getByNombre(String Name) {
-        Producto producto = productoRepository.findByNombre(Name);
+    public ProductoDTO getByNombre(String nombre) {
+        Producto producto = productoRepository.findByNombre(nombre).orElse(null);
 
         if (producto == null) {
             return null;
@@ -80,7 +80,7 @@ public class ProductoService {
     }
 
     public ProductoDTO guardar(ProductoDTO productoDTO, Long idPerfil) {
-        Perfil perfil = perfilRepository.findById(Math.toIntExact(idPerfil)).orElseThrow(() -> new RuntimeException("Viaje con id " + idPerfil + " no encontrado"));
+        Perfil perfil = perfilRepository.findById(idPerfil).orElseThrow(() -> new RuntimeException("Viaje con id " + idPerfil + " no encontrado"));
 
         Producto producto = new Producto();
         producto.setNombre(productoDTO.getNombre());
@@ -94,6 +94,7 @@ public class ProductoService {
         Producto productoGuardado = productoRepository.save(producto);
 
         ProductoDTO dto = new ProductoDTO();
+        dto.setId(productoGuardado.getId());
         dto.setNombre(productoGuardado.getNombre());
         dto.setDescripcion(productoGuardado.getDescripcion());
         dto.setPrecio(productoGuardado.getPrecio());
@@ -105,36 +106,19 @@ public class ProductoService {
         return dto;
     }
 
-    public ProductoDTO actualizar(ProductoDTO productoDTO, Long idProducto, Long idPerfil) {
-        Producto producto = productoRepository.findById(idProducto).orElseThrow(() -> new RuntimeException("Producto con id " + idProducto + " no encontrado"));
 
-        Perfil perfil = perfilRepository.findById(Math.toIntExact(idPerfil)).orElseThrow(() -> new RuntimeException("Perfil con id " + idPerfil + " no encontrado"));
 
-        producto.setNombre(productoDTO.getNombre());
-        producto.setDescripcion(productoDTO.getDescripcion());
-        producto.setPrecio(productoDTO.getPrecio());
-        producto.setEstado(productoDTO.getEstado());
-        producto.setImagen(productoDTO.getImagen());
-        producto.setVendido(productoDTO.getVendido());
-        producto.setPerfil(perfil);
 
-        Producto productoActualizado = productoRepository.save(producto);
 
-        ProductoDTO dto = new ProductoDTO();
-        dto.setId(productoActualizado.getId());
-        dto.setNombre(productoActualizado.getNombre());
-        dto.setDescripcion(productoActualizado.getDescripcion());
-        dto.setPrecio(productoActualizado.getPrecio());
-        dto.setEstado(productoActualizado.getEstado());
-        dto.setImagen(productoActualizado.getImagen());
-        dto.setVendido(productoActualizado.getVendido());
-        dto.setPerfil(productoActualizado.getPerfil().getId());
 
-        return dto;
-    }
+
+
 
     public String eliminar(Long id) {
+        if (!productoRepository.existsById(id)) {
+            throw new IllegalArgumentException("El id no existe");
+        }
         productoRepository.deleteById(id);
-        return "Producto eliminado correctamente";
+        return "Eliminado correctamente";
     }
 }

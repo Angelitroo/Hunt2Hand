@@ -5,6 +5,8 @@ import com.hunt2hand.model.Producto;
 import com.hunt2hand.service.ProductoService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,9 +30,15 @@ public class ProductoController {
         return productoService.getById(id);
     }
 
-    @GetMapping({"/nombre:{nombre}"})
-    public ProductoDTO getByNombre(@PathVariable String nombre) {
-        return productoService.getByNombre(nombre);
+    @GetMapping({"/buscar/{nombre}"})
+    public ResponseEntity<ProductoDTO> getProductoByNombre(@PathVariable String nombre) {
+        ProductoDTO productoDTO = productoService.getByNombre(nombre);
+
+        if (productoDTO == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(productoDTO);
     }
 
     @PostMapping({"/guardar/{idPerfil}"})
@@ -38,8 +46,21 @@ public class ProductoController {
         return productoService.guardar(producto, idPerfil);
     }
 
-    @DeleteMapping({"/eliminar"})
-    public String eliminar(Long id) {
-        return productoService.eliminar(id);
+
+
+
+
+
+
+
+    @DeleteMapping({"/eliminar/{id}"})
+    public ResponseEntity<String> eliminar(@PathVariable Long id) {
+        try {
+            String resultado = productoService.eliminar(id);
+            return ResponseEntity.ok(resultado);
+        }
+        catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 }
