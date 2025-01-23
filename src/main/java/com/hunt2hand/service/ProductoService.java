@@ -83,12 +83,12 @@ public class ProductoService {
         Perfil perfil = perfilRepository.findById(Math.toIntExact(idPerfil)).orElseThrow(() -> new RuntimeException("Viaje con id " + idPerfil + " no encontrado"));
 
         Producto producto = new Producto();
-        producto.setNombre(producto.getNombre());
-        producto.setDescripcion(producto.getDescripcion());
-        producto.setPrecio(producto.getPrecio());
-        producto.setEstado(producto.getEstado());
-        producto.setImagen(producto.getImagen());
-        producto.setVendido(producto.getVendido());
+        producto.setNombre(productoDTO.getNombre());
+        producto.setDescripcion(productoDTO.getDescripcion());
+        producto.setPrecio(productoDTO.getPrecio());
+        producto.setEstado(productoDTO.getEstado());
+        producto.setImagen(productoDTO.getImagen());
+        producto.setVendido(productoDTO.getVendido());
         producto.setPerfil(perfil);
 
         Producto productoGuardado = productoRepository.save(producto);
