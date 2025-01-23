@@ -38,8 +38,6 @@ public class ProductoController {
         return productoService.guardar(producto, idPerfil);
     }
 
-
-
     @DeleteMapping({"/eliminar"})
     public String eliminar(Long id) {
         return productoService.eliminar(id);

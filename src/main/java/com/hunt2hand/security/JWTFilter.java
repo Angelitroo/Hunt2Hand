@@ -20,10 +20,8 @@ import java.io.IOException;
 @AllArgsConstructor
 public class JWTFilter extends OncePerRequestFilter {
 
-
     private JWTService jwtService;
     private UsuarioService usuarioService;
-
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -31,39 +29,36 @@ public class JWTFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
-
         final String authHeader = request.getHeader("Authorization");
 
-
-        //Si viene por una url "/auth" lo dejamos pasar
-        if (request.getServletPath().contains("/auth")){
+        if (request.getServletPath().contains("/auth")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        if(authHeader== null || !authHeader.startsWith("Bearer")){
-            filterChain.doFilter(request,response);
+        if (authHeader == null || !authHeader.startsWith("Bearer")) {
+            filterChain.doFilter(request, response);
             return;
         }
 
         String token = authHeader.substring(7);
         TokenDataDTO tokenDataDTO = jwtService.extractTokenData(token);
 
-        if(tokenDataDTO!=null && SecurityContextHolder.getContext().getAuthentication() == null){
-
-
+        if (tokenDataDTO != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             Usuario usuario = (Usuario) usuarioService.loadUserByUsername(tokenDataDTO.getUsername());
 
-
-            if(usuario!= null && !jwtService.isExpired(token)){
+            if (usuario != null && !jwtService.isExpired(token)) {
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         usuario.getUsername(),
                         usuario.getPassword(),
                         usuario.getAuthorities());
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
-            }
 
+                // Agregar logs para verificar roles
+                System.out.println("Usuario autenticado: " + usuario.getUsername());
+                System.out.println("Roles: " + usuario.getAuthorities());
+            }
         }
 
         filterChain.doFilter(request, response);
