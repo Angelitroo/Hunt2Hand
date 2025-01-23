@@ -4,8 +4,7 @@ package com.hunt2hand.service;
 import com.hunt2hand.dto.LoginDTO;
 import com.hunt2hand.dto.RegistroDTO;
 import com.hunt2hand.dto.RespuestaDTO;
-import com.hunt2hand.enums.Rol;
-import com.hunt2hand.model.Perfil;
+import com.hunt2hand.dto.PerfilDTO;
 import com.hunt2hand.model.Usuario;
 import com.hunt2hand.repository.UsuarioRepository;
 import com.hunt2hand.security.JWTService;
@@ -48,17 +47,17 @@ public class UsuarioService implements UserDetailsService {
         nuevoUsuario.setRol(dto.getRol());
 
         // Crear el perfil asociado
-        Perfil perfil = new Perfil();
-        perfil.setNombre(dto.getNombre());
-        perfil.setApellido(dto.getApellido());
-        perfil.setUbicacion(dto.getUbicacion());
-        perfil.setImagen(dto.getUsername());
-        perfil.setBaneado(dto.isBaneado());
+        PerfilDTO perfilDTO = new PerfilDTO();
+        perfilDTO.setNombre(dto.getNombre());
+        perfilDTO.setApellido(dto.getApellido());
+        perfilDTO.setUbicacion(dto.getUbicacion());
+        perfilDTO.setImagen(dto.getUsername());
+        perfilDTO.setBaneado(dto.isBaneado());
 
         // Guardar usuario y perfil
         Usuario usuarioGuardado = usuarioRepository.save(nuevoUsuario);
-        perfil.setUsuario(usuarioGuardado);
-        perfilService.guardarPerfil(perfil);
+        perfilDTO.setUsuario(usuarioGuardado.getId());
+        perfilService.guardar(perfilDTO, usuarioGuardado.getId());
 
         return usuarioGuardado;
     }

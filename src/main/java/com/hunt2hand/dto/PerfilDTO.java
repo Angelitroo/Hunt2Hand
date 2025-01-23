@@ -10,4 +10,5 @@ public class PerfilDTO {
     private String ubicacion;
     private String imagen;
     private Boolean baneado;
+    private Long Usuario;
 }
