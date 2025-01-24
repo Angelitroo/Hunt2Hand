@@ -19,7 +19,7 @@ public class AuthController {
 
     private UsuarioService service;
 
-    @PostMapping("/registro/perfil")
+    @PostMapping("/registro")
     public Usuario registro(@RequestBody RegistroDTO registroDTO){
         return service.registrarUsuario(registroDTO);
     }
