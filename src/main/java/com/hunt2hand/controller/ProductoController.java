@@ -46,12 +46,10 @@ public class ProductoController {
         return productoService.guardar(producto, idPerfil);
     }
 
-
-
-
-
-
-
+    @PutMapping({"/actualizar/{id}"})
+    public ProductoDTO actualizar(@RequestBody ProductoDTO producto, @PathVariable Long id) {
+        return productoService.actualizar(producto, id);
+    }
 
     @DeleteMapping({"/eliminar/{id}"})
     public ResponseEntity<String> eliminar(@PathVariable Long id) {

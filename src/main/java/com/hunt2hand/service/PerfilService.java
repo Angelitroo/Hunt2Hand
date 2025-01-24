@@ -102,12 +102,27 @@ public class PerfilService {
         return dto;
     }
 
+    public PerfilDTO actualizar(PerfilDTO perfilDTO, Long idPerfil) {
+        Perfil perfil = perfilRepository.findById(idPerfil).orElseThrow(() -> new IllegalArgumentException("El id no existe"));
 
+        perfil.setNombre(perfilDTO.getNombre());
+        perfil.setApellido(perfilDTO.getApellido());
+        perfil.setUbicacion(perfilDTO.getUbicacion());
+        perfil.setImagen(perfilDTO.getImagen());
+        perfil.setBaneado(perfilDTO.getBaneado());
 
+        Perfil perfilActualizado = perfilRepository.save(perfil);
 
+        PerfilDTO dto = new PerfilDTO();
+        dto.setId(perfilActualizado.getId());
+        dto.setNombre(perfilActualizado.getNombre());
+        dto.setApellido(perfilActualizado.getApellido());
+        dto.setUbicacion(perfilActualizado.getUbicacion());
+        dto.setImagen(perfilActualizado.getImagen());
+        dto.setBaneado(perfilActualizado.isBaneado());
 
-
-
+        return dto;
+    }
 
     public String eliminar(Long id) {
         if (!perfilRepository.existsById(id)) {
@@ -115,5 +130,9 @@ public class PerfilService {
         }
         perfilRepository.deleteById(id);
         return "Eliminado correctamente";
+    }
+
+    public Perfil buscarPorUsuario(Usuario usuario){
+        return perfilRepository.findTopByUsuario(usuario);
     }
 }

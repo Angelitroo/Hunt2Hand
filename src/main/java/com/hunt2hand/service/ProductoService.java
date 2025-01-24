@@ -1,5 +1,6 @@
 package com.hunt2hand.service;
 
+import com.hunt2hand.dto.PerfilDTO;
 import com.hunt2hand.dto.ProductoDTO;
 import com.hunt2hand.model.Perfil;
 import com.hunt2hand.model.Producto;
@@ -106,13 +107,30 @@ public class ProductoService {
         return dto;
     }
 
+    public ProductoDTO actualizar(ProductoDTO productoDTO, Long idProducto) {
+        Producto producto = productoRepository.findById(idProducto).orElseThrow(() -> new IllegalArgumentException("El id no existe"));
 
+        producto.setNombre(productoDTO.getNombre());
+        producto.setDescripcion(productoDTO.getDescripcion());
+        producto.setPrecio(productoDTO.getPrecio());
+        producto.setEstado(productoDTO.getEstado());
+        producto.setImagen(productoDTO.getImagen());
+        producto.setVendido(productoDTO.getVendido());
 
+        Producto productoActualizado = productoRepository.save(producto);
 
+        ProductoDTO dto = new ProductoDTO();
+        dto.setId(productoActualizado.getId());
+        dto.setNombre(productoActualizado.getNombre());
+        dto.setDescripcion(productoActualizado.getDescripcion());
+        dto.setPrecio(productoActualizado.getPrecio());
+        dto.setEstado(productoActualizado.getEstado());
+        dto.setImagen(productoActualizado.getImagen());
+        dto.setVendido(productoActualizado.getVendido());
+        dto.setPerfil(productoActualizado.getPerfil().getId());
 
-
-
-
+        return dto;
+    }
 
     public String eliminar(Long id) {
         if (!productoRepository.existsById(id)) {
