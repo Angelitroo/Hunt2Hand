@@ -30,6 +30,7 @@ public class JWTService {
     public String generateToken(Usuario usuario){
         TokenDataDTO tokenDataDTO = TokenDataDTO
                 .builder()
+                .id(usuario.getId())
                 .username(usuario.getUsername())
                 .rol(usuario.getRol().name())
                 .fecha_creacion(System.currentTimeMillis())
@@ -61,6 +62,7 @@ public class JWTService {
                 .fecha_creacion((Long) mapa.get("fecha_creacion"))
                 .fecha_expiracion((Long) mapa.get("fecha_expiracion"))
                 .rol((String) mapa.get("rol"))
+                .id((Long) mapa.get("id"))
                 .build();
     }
 

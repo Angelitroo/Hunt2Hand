@@ -43,14 +43,6 @@ public class PerfilController {
         return perfilService.guardar(perfilDTO, idUsuario);
     }
 
-
-
-
-
-
-
-
-
     @DeleteMapping("/eliminar/{id}")
     public ResponseEntity<String> eliminar(@PathVariable Long id) {
         try {
