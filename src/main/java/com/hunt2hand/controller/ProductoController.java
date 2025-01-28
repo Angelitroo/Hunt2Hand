@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -31,14 +32,10 @@ public class ProductoController {
     }
 
     @GetMapping({"/buscar/{nombre}"})
-    public ResponseEntity<ProductoDTO> getProductoByNombre(@PathVariable String nombre) {
-        ProductoDTO productoDTO = productoService.getByNombre(nombre);
+    public ResponseEntity<List<ProductoDTO>> buscarPorNombre(@PathVariable String nombre) {
+        List<ProductoDTO> productos = productoService.getByNombre(nombre);
 
-        if (productoDTO == null) {
-            return ResponseEntity.notFound().build();
-        }
-
-        return ResponseEntity.ok(productoDTO);
+        return ResponseEntity.ok(productos);
     }
 
     @PostMapping({"/guardar/{idPerfil}"})

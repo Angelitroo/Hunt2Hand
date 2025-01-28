@@ -63,26 +63,28 @@ public class ProductoService {
         return dto;
     }
 
-    public ProductoDTO getByNombre(String nombre) {
-        Producto producto = productoRepository.findByNombre(nombre).orElse(null);
+    public List<ProductoDTO> getByNombre(String nombre) {
+        String pattern = nombre + "%";
 
-        if (producto == null) {
-            return null;
+        List<Producto> productos = productoRepository.findByNombreIsLike(pattern);
+
+        if (productos == null) {
+            return Collections.emptyList();
         }
 
-        ProductoDTO dto = new ProductoDTO();
-        dto.setId(producto.getId());
-        dto.setNombre(producto.getNombre());
-        dto.setDescripcion(producto.getDescripcion());
-        dto.setPrecio(producto.getPrecio());
-        dto.setEstado(producto.getEstado());
-        dto.setImagen(producto.getImagen());
-        dto.setVendido(producto.getVendido());
-        dto.setPerfil(producto.getPerfil().getId());
-        return dto;
+        return productos.stream().map(producto -> {
+            ProductoDTO dto = new ProductoDTO();
+            dto.setId(producto.getId());
+            dto.setNombre(producto.getNombre());
+            dto.setDescripcion(producto.getDescripcion());
+            dto.setPrecio(producto.getPrecio());
+            dto.setEstado(producto.getEstado());
+            dto.setImagen(producto.getImagen());
+            dto.setVendido(producto.getVendido());
+            dto.setPerfil(producto.getPerfil().getId());
+            return dto;
+        }).collect(Collectors.toList());
     }
-
-
 
     public ProductoDTO guardar(ProductoDTO productoDTO, Long idPerfil) {
         Perfil perfil = perfilRepository.findById(idPerfil).orElseThrow(() -> new RuntimeException("Viaje con id " + idPerfil + " no encontrado"));

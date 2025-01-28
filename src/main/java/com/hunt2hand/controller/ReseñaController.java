@@ -14,8 +14,8 @@ public class ReseñaController {
     private ReseñaService reseñaService;
 
     @PostMapping("/crear")
-    public ResponseEntity<ReseñaDTO> crearReseña(@RequestBody ReseñaDTO reseñaDTO) {
-        ReseñaDTO reseñaCreada = reseñaService.crearReseña(reseñaDTO);
+    public ResponseEntity<ReseñaDTO> crearReseña(@RequestBody ReseñaDTO reseñaDTO, @PathVariable Long id_perfilvalorado, @PathVariable Long id_perfilvalorador) {
+        ReseñaDTO reseñaCreada = reseñaService.guardarReseña(reseñaDTO, id_perfilvalorado, id_perfilvalorador);
         return ResponseEntity.ok(reseñaCreada);
     }
 }
