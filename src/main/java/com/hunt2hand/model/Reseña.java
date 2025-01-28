@@ -21,12 +21,12 @@ public class Reseña {
     private Integer valoracion;
 
     @ManyToOne
-    @JoinColumn(name = "id_perfil", nullable = false)
-    private Perfil perfil;
+    @JoinColumn(name = "id_perfilvalorado", nullable = false)
+    private Perfil perfilValorado;
 
     @OneToOne
-    @JoinColumn(name = "id_producto", nullable = false)
-    private Producto producto;
+    @JoinColumn(name = "id_perfilvalorador", nullable = false)
+    private Perfil perfilValorador;
 
 
 

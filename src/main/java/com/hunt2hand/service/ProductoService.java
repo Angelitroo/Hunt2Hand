@@ -82,23 +82,7 @@ public class ProductoService {
         return dto;
     }
 
-    public Set<ProductoDTO> getByCategoria(String categoria) {
-        Set<ProductoDTO> productoDTOS = new HashSet<>();
-        for (Producto producto : productoRepository.findByCategoria(categoria)) {
-            ProductoDTO productoDTO = new ProductoDTO();
-            productoDTO.setId(producto.getId());
-            productoDTO.setNombre(producto.getNombre());
-            productoDTO.setCategoria(producto.getCategoria());
-            productoDTO.setDescripcion(producto.getDescripcion());
-            productoDTO.setPrecio(producto.getPrecio());
-            productoDTO.setEstado(producto.getEstado());
-            productoDTO.setImagen(producto.getImagen());
-            productoDTO.setVendido(producto.getVendido());
-            productoDTO.setPerfil(producto.getPerfil().getId());
-            productoDTOS.add(productoDTO);
-        }
-        return productoDTOS;
-    }
+
 
     public ProductoDTO guardar(ProductoDTO productoDTO, Long idPerfil) {
         Perfil perfil = perfilRepository.findById(idPerfil).orElseThrow(() -> new RuntimeException("Viaje con id " + idPerfil + " no encontrado"));
