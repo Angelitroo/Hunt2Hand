@@ -1,5 +1,6 @@
 package com.hunt2hand.service;
 
+import com.hunt2hand.dto.PerfilDTO;
 import com.hunt2hand.dto.ProductoDTO;
 import com.hunt2hand.model.Perfil;
 import com.hunt2hand.model.Producto;
@@ -20,7 +21,7 @@ public class ProductoService {
     private final ProductoRepository productoRepository;
     private final PerfilRepository perfilRepository;
 
-    public List<ProductoDTO> getAll(Producto producto) {
+    public List<ProductoDTO> getAll() {
         List<Producto> productos = productoRepository.findAll();
 
         if (productos == null) {
@@ -62,8 +63,8 @@ public class ProductoService {
         return dto;
     }
 
-    public ProductoDTO getByNombre(String Name) {
-        Producto producto = productoRepository.findByNombre(Name);
+    public ProductoDTO getByNombre(String nombre) {
+        Producto producto = productoRepository.findByNombre(nombre).orElse(null);
 
         if (producto == null) {
             return null;
@@ -100,20 +101,21 @@ public class ProductoService {
     }
 
     public ProductoDTO guardar(ProductoDTO productoDTO, Long idPerfil) {
-        Perfil perfil = perfilRepository.findById(Math.toIntExact(idPerfil)).orElseThrow(() -> new RuntimeException("Viaje con id " + idPerfil + " no encontrado"));
+        Perfil perfil = perfilRepository.findById(idPerfil).orElseThrow(() -> new RuntimeException("Viaje con id " + idPerfil + " no encontrado"));
 
         Producto producto = new Producto();
-        producto.setNombre(producto.getNombre());
-        producto.setDescripcion(producto.getDescripcion());
-        producto.setPrecio(producto.getPrecio());
-        producto.setEstado(producto.getEstado());
-        producto.setImagen(producto.getImagen());
-        producto.setVendido(producto.getVendido());
+        producto.setNombre(productoDTO.getNombre());
+        producto.setDescripcion(productoDTO.getDescripcion());
+        producto.setPrecio(productoDTO.getPrecio());
+        producto.setEstado(productoDTO.getEstado());
+        producto.setImagen(productoDTO.getImagen());
+        producto.setVendido(productoDTO.getVendido());
         producto.setPerfil(perfil);
 
         Producto productoGuardado = productoRepository.save(producto);
 
         ProductoDTO dto = new ProductoDTO();
+        dto.setId(productoGuardado.getId());
         dto.setNombre(productoGuardado.getNombre());
         dto.setDescripcion(productoGuardado.getDescripcion());
         dto.setPrecio(productoGuardado.getPrecio());
@@ -125,10 +127,8 @@ public class ProductoService {
         return dto;
     }
 
-    public ProductoDTO actualizar(ProductoDTO productoDTO, Long idProducto, Long idPerfil) {
-        Producto producto = productoRepository.findById(idProducto).orElseThrow(() -> new RuntimeException("Producto con id " + idProducto + " no encontrado"));
-
-        Perfil perfil = perfilRepository.findById(Math.toIntExact(idPerfil)).orElseThrow(() -> new RuntimeException("Perfil con id " + idPerfil + " no encontrado"));
+    public ProductoDTO actualizar(ProductoDTO productoDTO, Long idProducto) {
+        Producto producto = productoRepository.findById(idProducto).orElseThrow(() -> new IllegalArgumentException("El id no existe"));
 
         producto.setNombre(productoDTO.getNombre());
         producto.setDescripcion(productoDTO.getDescripcion());
@@ -136,7 +136,6 @@ public class ProductoService {
         producto.setEstado(productoDTO.getEstado());
         producto.setImagen(productoDTO.getImagen());
         producto.setVendido(productoDTO.getVendido());
-        producto.setPerfil(perfil);
 
         Producto productoActualizado = productoRepository.save(producto);
 
@@ -154,7 +153,10 @@ public class ProductoService {
     }
 
     public String eliminar(Long id) {
+        if (!productoRepository.existsById(id)) {
+            throw new IllegalArgumentException("El id no existe");
+        }
         productoRepository.deleteById(id);
-        return "Producto eliminado correctamente";
+        return "Eliminado correctamente";
     }
 }
