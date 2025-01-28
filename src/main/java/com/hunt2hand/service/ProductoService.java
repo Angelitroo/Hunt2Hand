@@ -64,9 +64,9 @@ public class ProductoService {
     }
 
     public List<ProductoDTO> getByNombre(String nombre) {
-        String pattern = nombre + "%";
+        String patron = nombre + "%";
 
-        List<Producto> productos = productoRepository.findByNombreIsLike(pattern);
+        List<Producto> productos = productoRepository.findByNombreLikeIgnoreCase(patron);
 
         if (productos == null) {
             return Collections.emptyList();
