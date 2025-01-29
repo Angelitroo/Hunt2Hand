@@ -58,6 +58,7 @@ public class PerfilService {
         dto.setUbicacion(perfil.getUbicacion());
         dto.setImagen(perfil.getImagen());
         dto.setBaneado(perfil.isBaneado());
+        dto.setUsuario(perfil.getUsuario().getId());
         return dto;
     }
 
@@ -84,7 +85,7 @@ public class PerfilService {
     }
 
     public PerfilDTO guardar(PerfilDTO perfilDTO, Long idUsuario) {
-        Usuario usuario = usuarioRepository.findById(idUsuario).orElseThrow(() -> new RuntimeException("Viaje con id " + idUsuario + " no encontrado"));;
+        Usuario usuario = usuarioRepository.findById(idUsuario).orElseThrow(() -> new RuntimeException("Usuario con id " + idUsuario + " no encontrado"));;
 
         Perfil perfil = new Perfil();
         perfil.setId(perfilDTO.getId());

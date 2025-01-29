@@ -87,10 +87,11 @@ public class ProductoService {
     }
 
     public ProductoDTO guardar(ProductoDTO productoDTO, Long idPerfil) {
-        Perfil perfil = perfilRepository.findById(idPerfil).orElseThrow(() -> new RuntimeException("Viaje con id " + idPerfil + " no encontrado"));
+        Perfil perfil = perfilRepository.findById(idPerfil).orElseThrow(() -> new RuntimeException("Usuario con id " + idPerfil + " no encontrado"));
 
         Producto producto = new Producto();
         producto.setNombre(productoDTO.getNombre());
+        producto.setCategoria(productoDTO.getCategoria());
         producto.setDescripcion(productoDTO.getDescripcion());
         producto.setPrecio(productoDTO.getPrecio());
         producto.setEstado(productoDTO.getEstado());
@@ -103,6 +104,7 @@ public class ProductoService {
         ProductoDTO dto = new ProductoDTO();
         dto.setId(productoGuardado.getId());
         dto.setNombre(productoGuardado.getNombre());
+        dto.setCategoria(productoGuardado.getCategoria());
         dto.setDescripcion(productoGuardado.getDescripcion());
         dto.setPrecio(productoGuardado.getPrecio());
         dto.setEstado(productoGuardado.getEstado());
