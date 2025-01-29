@@ -1,7 +1,9 @@
 package com.hunt2hand.service;
 
 import com.hunt2hand.dto.PerfilDTO;
+import com.hunt2hand.dto.ProductoDTO;
 import com.hunt2hand.model.Perfil;
+import com.hunt2hand.model.Producto;
 import com.hunt2hand.model.Usuario;
 import com.hunt2hand.repository.PerfilRepository;
 import com.hunt2hand.repository.UsuarioRepository;
@@ -56,28 +58,34 @@ public class PerfilService {
         dto.setUbicacion(perfil.getUbicacion());
         dto.setImagen(perfil.getImagen());
         dto.setBaneado(perfil.isBaneado());
+        dto.setUsuario(perfil.getUsuario().getId());
         return dto;
     }
 
-    public PerfilDTO getByNombre(String nombre) {
-        Perfil perfil = perfilRepository.findByNombre(nombre).orElse(null);
 
-        if (perfil == null) {
-            return null;
+    public List<PerfilDTO> getByNombre(String nombre) {
+        String patron = nombre + "%";
+
+        List<Perfil> perfiles = perfilRepository.findByNombreLikeIgnoreCase(patron);
+
+        if (perfiles == null) {
+            return Collections.emptyList();
         }
 
-        PerfilDTO dto = new PerfilDTO();
-        dto.setId(perfil.getId());
-        dto.setNombre(perfil.getNombre());
-        dto.setApellido(perfil.getApellido());
-        dto.setUbicacion(perfil.getUbicacion());
-        dto.setImagen(perfil.getImagen());
-        dto.setBaneado(perfil.isBaneado());
-        return dto;
+        return perfiles.stream().map(perfil -> {
+            PerfilDTO dto = new PerfilDTO();
+            dto.setId(perfil.getId());
+            dto.setNombre(perfil.getNombre());
+            dto.setApellido(perfil.getApellido());
+            dto.setUbicacion(perfil.getUbicacion());
+            dto.setImagen(perfil.getImagen());
+            dto.setBaneado(perfil.isBaneado());
+            return dto;
+        }).collect(Collectors.toList());
     }
 
     public PerfilDTO guardar(PerfilDTO perfilDTO, Long idUsuario) {
-        Usuario usuario = usuarioRepository.findById(idUsuario).orElseThrow(() -> new RuntimeException("Viaje con id " + idUsuario + " no encontrado"));;
+        Usuario usuario = usuarioRepository.findById(idUsuario).orElseThrow(() -> new RuntimeException("Usuario con id " + idUsuario + " no encontrado"));;
 
         Perfil perfil = new Perfil();
         perfil.setId(perfilDTO.getId());
