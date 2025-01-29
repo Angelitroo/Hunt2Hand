@@ -10,7 +10,7 @@ import lombok.Data;
 public class RegistroDTO {
 
     //TABLA PERFIL
-    private  String nombre;
+    private String nombre;
     private String apellido;
     private String ubicacion;
     private boolean baneado = false;
@@ -19,6 +19,6 @@ public class RegistroDTO {
     @NotBlank(message = "El nombre de usuario no puede estar vacío.")
     private String username;
     private String password;
-    private Rol rol;
+    private Rol rol = Rol.USER;
 
 }
