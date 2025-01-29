@@ -24,7 +24,7 @@ public class Reseña {
     @JoinColumn(name = "id_perfilvalorado", nullable = false)
     private Perfil perfilValorado;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "id_perfilvalorador", nullable = false)
     private Perfil perfilValorador;
 
