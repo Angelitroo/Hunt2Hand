@@ -1,5 +1,6 @@
 package com.hunt2hand.controller;
 
+import com.hunt2hand.dto.PerfilDTO;
 import com.hunt2hand.dto.ProductoDTO;
 import com.hunt2hand.model.Producto;
 import com.hunt2hand.service.ProductoService;
@@ -9,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -31,14 +33,10 @@ public class ProductoController {
     }
 
     @GetMapping({"/buscar/{nombre}"})
-    public ResponseEntity<ProductoDTO> getProductoByNombre(@PathVariable String nombre) {
-        ProductoDTO productoDTO = productoService.getByNombre(nombre);
+    public ResponseEntity<List<ProductoDTO>> buscarPorNombre(@PathVariable String nombre) {
+        List<ProductoDTO> productos = productoService.getByNombre(nombre);
 
-        if (productoDTO == null) {
-            return ResponseEntity.notFound().build();
-        }
-
-        return ResponseEntity.ok(productoDTO);
+        return ResponseEntity.ok(productos);
     }
 
     @PostMapping({"/guardar/{idPerfil}"})
@@ -46,12 +44,10 @@ public class ProductoController {
         return productoService.guardar(producto, idPerfil);
     }
 
-
-
-
-
-
-
+    @PutMapping({"/actualizar/{id}"})
+    public ProductoDTO actualizar(@RequestBody ProductoDTO producto, @PathVariable Long id) {
+        return productoService.actualizar(producto, id);
+    }
 
     @DeleteMapping({"/eliminar/{id}"})
     public ResponseEntity<String> eliminar(@PathVariable Long id) {

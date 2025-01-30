@@ -2,8 +2,6 @@ package com.hunt2hand.controller;
 
 import com.hunt2hand.dto.PerfilDTO;
 import com.hunt2hand.dto.ProductoDTO;
-import com.hunt2hand.dto.SeguirDTO;
-import com.hunt2hand.model.Seguidores;
 import com.hunt2hand.service.PerfilService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,21 +27,27 @@ public class PerfilController {
         return perfilService.getById(id);
     }
 
-    @GetMapping("/buscar/{nombre}")
-    public ResponseEntity<PerfilDTO> getByNombre(@PathVariable String nombre) {
-        PerfilDTO perfilDTO = perfilService.getByNombre(nombre);
+    @GetMapping({"/buscar/{nombre}"})
+    public ResponseEntity<List<PerfilDTO>> buscarPorNombre(@PathVariable String nombre) {
+        List<PerfilDTO> perfiles = perfilService.getByNombre(nombre);
 
-        if (perfilDTO == null) {
-            return ResponseEntity.notFound().build();
-        }
-
-        return ResponseEntity.ok(perfilDTO);
+        return ResponseEntity.ok(perfiles);
     }
 
     @PostMapping("/guardar/{idUsuario}")
     public PerfilDTO guardar(@RequestBody PerfilDTO perfilDTO, @PathVariable Long idUsuario) {
         return perfilService.guardar(perfilDTO, idUsuario);
     }
+
+    @PutMapping("/actualizar/{id}")
+    public PerfilDTO actualizar(@RequestBody PerfilDTO perfilDTO, @PathVariable Long idPerfil) {
+        return perfilService.actualizar(perfilDTO, idPerfil);
+    }
+
+
+
+
+
 
     @DeleteMapping("/eliminar/{id}")
     public ResponseEntity<String> eliminar(@PathVariable Long id) {

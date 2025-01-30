@@ -1,5 +1,6 @@
 package com.hunt2hand.service;
 
+import com.hunt2hand.dto.PerfilDTO;
 import com.hunt2hand.dto.ProductoDTO;
 import com.hunt2hand.model.Perfil;
 import com.hunt2hand.model.Producto;
@@ -9,7 +10,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -60,30 +63,35 @@ public class ProductoService {
         return dto;
     }
 
-    public ProductoDTO getByNombre(String nombre) {
-        Producto producto = productoRepository.findByNombre(nombre).orElse(null);
+    public List<ProductoDTO> getByNombre(String nombre) {
+        String patron = nombre + "%";
 
-        if (producto == null) {
-            return null;
+        List<Producto> productos = productoRepository.findByNombreLikeIgnoreCase(patron);
+
+        if (productos == null) {
+            return Collections.emptyList();
         }
 
-        ProductoDTO dto = new ProductoDTO();
-        dto.setId(producto.getId());
-        dto.setNombre(producto.getNombre());
-        dto.setDescripcion(producto.getDescripcion());
-        dto.setPrecio(producto.getPrecio());
-        dto.setEstado(producto.getEstado());
-        dto.setImagen(producto.getImagen());
-        dto.setVendido(producto.getVendido());
-        dto.setPerfil(producto.getPerfil().getId());
-        return dto;
+        return productos.stream().map(producto -> {
+            ProductoDTO dto = new ProductoDTO();
+            dto.setId(producto.getId());
+            dto.setNombre(producto.getNombre());
+            dto.setDescripcion(producto.getDescripcion());
+            dto.setPrecio(producto.getPrecio());
+            dto.setEstado(producto.getEstado());
+            dto.setImagen(producto.getImagen());
+            dto.setVendido(producto.getVendido());
+            dto.setPerfil(producto.getPerfil().getId());
+            return dto;
+        }).collect(Collectors.toList());
     }
 
     public ProductoDTO guardar(ProductoDTO productoDTO, Long idPerfil) {
-        Perfil perfil = perfilRepository.findById(idPerfil).orElseThrow(() -> new RuntimeException("Viaje con id " + idPerfil + " no encontrado"));
+        Perfil perfil = perfilRepository.findById(idPerfil).orElseThrow(() -> new RuntimeException("Usuario con id " + idPerfil + " no encontrado"));
 
         Producto producto = new Producto();
         producto.setNombre(productoDTO.getNombre());
+        producto.setCategoria(productoDTO.getCategoria());
         producto.setDescripcion(productoDTO.getDescripcion());
         producto.setPrecio(productoDTO.getPrecio());
         producto.setEstado(productoDTO.getEstado());
@@ -96,6 +104,7 @@ public class ProductoService {
         ProductoDTO dto = new ProductoDTO();
         dto.setId(productoGuardado.getId());
         dto.setNombre(productoGuardado.getNombre());
+        dto.setCategoria(productoGuardado.getCategoria());
         dto.setDescripcion(productoGuardado.getDescripcion());
         dto.setPrecio(productoGuardado.getPrecio());
         dto.setEstado(productoGuardado.getEstado());
@@ -106,13 +115,30 @@ public class ProductoService {
         return dto;
     }
 
+    public ProductoDTO actualizar(ProductoDTO productoDTO, Long idProducto) {
+        Producto producto = productoRepository.findById(idProducto).orElseThrow(() -> new IllegalArgumentException("El id no existe"));
 
+        producto.setNombre(productoDTO.getNombre());
+        producto.setDescripcion(productoDTO.getDescripcion());
+        producto.setPrecio(productoDTO.getPrecio());
+        producto.setEstado(productoDTO.getEstado());
+        producto.setImagen(productoDTO.getImagen());
+        producto.setVendido(productoDTO.getVendido());
 
+        Producto productoActualizado = productoRepository.save(producto);
 
+        ProductoDTO dto = new ProductoDTO();
+        dto.setId(productoActualizado.getId());
+        dto.setNombre(productoActualizado.getNombre());
+        dto.setDescripcion(productoActualizado.getDescripcion());
+        dto.setPrecio(productoActualizado.getPrecio());
+        dto.setEstado(productoActualizado.getEstado());
+        dto.setImagen(productoActualizado.getImagen());
+        dto.setVendido(productoActualizado.getVendido());
+        dto.setPerfil(productoActualizado.getPerfil().getId());
 
-
-
-
+        return dto;
+    }
 
     public String eliminar(Long id) {
         if (!productoRepository.existsById(id)) {

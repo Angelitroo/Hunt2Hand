@@ -18,12 +18,10 @@ public class Reporte {
     @Column(name = "id")
     private Long id;
 
-    @Id
     @ManyToOne
     @JoinColumn(name = "id_reportador")
     private Perfil reportador;
 
-    @Id
     @ManyToOne
     @JoinColumn(name = "id_reportado")
     private Perfil reportado;

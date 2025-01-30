@@ -1,7 +1,5 @@
 package com.hunt2hand.model;
 
-import com.hunt2hand.enums.Estado;
-import com.hunt2hand.enums.Rol;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,6 +22,9 @@ public class Producto {
     @Column(name = "nombre")
     private String nombre;
 
+    @Column(name = "categoria")
+    private String categoria;
+
     @Column(name = "descripcion")
     private String descripcion;
 
@@ -31,7 +32,7 @@ public class Producto {
     private BigDecimal precio;
 
     @Column(name = "estado")
-    private Estado estado;
+    private String estado;
 
     @Column(name = "imagen")
     private String imagen;
