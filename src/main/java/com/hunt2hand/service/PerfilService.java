@@ -58,7 +58,16 @@ public class PerfilService {
             return Collections.emptyList();
         }
 
-        return convertirAPerfilDTO(perfil);
+        return perfiles.stream().map(perfil -> {
+            PerfilDTO dto = new PerfilDTO();
+            dto.setId(perfil.getId());
+            dto.setNombre(perfil.getNombre());
+            dto.setApellido(perfil.getApellido());
+            dto.setUbicacion(perfil.getUbicacion());
+            dto.setImagen(perfil.getImagen());
+            dto.setBaneado(perfil.isBaneado());
+            return dto;
+        }).collect(Collectors.toList());
     }
 
     public PerfilDTO guardar(PerfilDTO perfilDTO, Long idUsuario) {

@@ -90,6 +90,7 @@ public class ProductoService {
         Perfil perfil = perfilRepository.findById(idPerfil).orElseThrow(() -> new RuntimeException("Usuario con id " + idPerfil + " no encontrado"));
 
         Producto producto = new Producto();
+        producto.setId(productoDTO.getId());
         producto.setNombre(productoDTO.getNombre());
         producto.setCategoria(productoDTO.getCategoria());
         producto.setDescripcion(productoDTO.getDescripcion());

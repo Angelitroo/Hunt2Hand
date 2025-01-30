@@ -2,6 +2,8 @@ package com.hunt2hand.controller;
 
 import com.hunt2hand.dto.PerfilDTO;
 import com.hunt2hand.dto.ProductoDTO;
+import com.hunt2hand.dto.SeguirDTO;
+import com.hunt2hand.model.Seguidores;
 import com.hunt2hand.service.PerfilService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
