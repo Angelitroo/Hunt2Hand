@@ -1,5 +1,6 @@
 package com.hunt2hand.model;
 
+import com.hunt2hand.enums.Categoria;
 import com.hunt2hand.enums.Estado;
 import com.hunt2hand.enums.Rol;
 import jakarta.persistence.*;
@@ -25,7 +26,7 @@ public class Producto {
     private String nombre;
 
     @Column(name = "categoria")
-    private String categoria;
+    private Categoria categoria;
 
     @Column(name = "descripcion")
     private String descripcion;

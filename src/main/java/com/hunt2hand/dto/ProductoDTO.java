@@ -1,5 +1,6 @@
 package com.hunt2hand.dto;
 
+import com.hunt2hand.enums.Categoria;
 import com.hunt2hand.enums.Estado;
 import lombok.Data;
 
@@ -9,7 +10,7 @@ import java.math.BigDecimal;
 public class ProductoDTO {
     private Long id;
     private String nombre;
-    private String categoria;
+    private Categoria categoria;
     private String descripcion;
     private BigDecimal precio;
     private Estado estado;
