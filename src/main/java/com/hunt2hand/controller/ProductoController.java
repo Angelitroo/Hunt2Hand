@@ -27,6 +27,12 @@ public class ProductoController {
         return productoService.getAll();
     }
 
+    @GetMapping("/perfil/{idPerfil}")
+    public ResponseEntity<List<ProductoDTO>> getByPerfilId(@PathVariable Long idPerfil) {
+        List<ProductoDTO> productos = productoService.getByPerfilId(idPerfil);
+        return ResponseEntity.ok(productos);
+    }
+
     @GetMapping({"/{id}"})
     public ProductoDTO getById(@PathVariable Long id) {
         return productoService.getById(id);
