@@ -1,10 +1,8 @@
 package com.hunt2hand.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
+@Data
 public class SeguirDTO {
     private Long idSeguidor;
     private Long idSeguido;
