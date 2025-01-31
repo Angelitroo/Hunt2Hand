@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/chats")
+@RequestMapping("/chat")
 @RequiredArgsConstructor
 public class ChatController {
     private final ChatService chatService;
@@ -21,14 +21,14 @@ public class ChatController {
     }
 
     @GetMapping("/{idUsuario}")
-    public ResponseEntity<List<ChatDTO>> obtenerChatsPorUsuario(@PathVariable Long idUsuario) {
-        List<ChatDTO> chats = chatService.obtenerChatsPorUsuario(idUsuario);
+    public ResponseEntity<List<ChatDTO>> getChatById(@PathVariable Long idUsuario) {
+        List<ChatDTO> chats = chatService.getChatById(idUsuario);
         return ResponseEntity.ok(chats);
     }
 
     @GetMapping("/detalles/{idChat}")
-    public ResponseEntity<ChatDTO> obtenerChatPorId(@PathVariable Long idChat) {
-        ChatDTO chat = chatService.obtenerChatPorId(idChat);
+    public ResponseEntity<ChatDTO> getDetallesChat(@PathVariable Long idChat) {
+        ChatDTO chat = chatService.getDetallesChat(idChat);
         return chat != null ? ResponseEntity.ok(chat) : ResponseEntity.notFound().build();
     }
 }

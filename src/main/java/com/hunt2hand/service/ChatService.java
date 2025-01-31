@@ -34,12 +34,12 @@ public class ChatService {
         return convertirAChatDTO(chat);
     }
 
-    public List<ChatDTO> obtenerChatsPorUsuario(Long idUsuario) {
+    public List<ChatDTO> getChatById(Long idUsuario) {
         List<Chat> chats = chatRepository.findChatsByUserId(idUsuario);
         return chats.stream().map(this::convertirAChatDTO).collect(Collectors.toList());
     }
 
-    public ChatDTO obtenerChatPorId(Long idChat) {
+    public ChatDTO getDetallesChat(Long idChat) {
         Optional<Chat> chat = chatRepository.findById(idChat);
         return chat.map(this::convertirAChatDTO).orElse(null);
     }
@@ -49,6 +49,8 @@ public class ChatService {
         dto.setId(chat.getId());
         dto.setId_creador(chat.getCreador().getId());
         dto.setId_receptor(chat.getReceptor().getId());
+        dto.setNombre_receptor(chat.getReceptor().getNombre());
+        dto.setImagen_receptor(chat.getReceptor().getImagen());
         return dto;
     }
 }
