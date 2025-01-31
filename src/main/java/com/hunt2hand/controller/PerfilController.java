@@ -29,21 +29,27 @@ public class PerfilController {
         return perfilService.getById(id);
     }
 
-    @GetMapping("/buscar/{nombre}")
-    public ResponseEntity<PerfilDTO> getByNombre(@PathVariable String nombre) {
-        PerfilDTO perfilDTO = perfilService.getByNombre(nombre);
+    @GetMapping({"/buscar/{nombre}"})
+    public ResponseEntity<List<PerfilDTO>> buscarPorNombre(@PathVariable String nombre) {
+        List<PerfilDTO> perfiles = perfilService.getByNombre(nombre);
 
-        if (perfilDTO == null) {
-            return ResponseEntity.notFound().build();
-        }
-
-        return ResponseEntity.ok(perfilDTO);
+        return ResponseEntity.ok(perfiles);
     }
 
     @PostMapping("/guardar/{idUsuario}")
     public PerfilDTO guardar(@RequestBody PerfilDTO perfilDTO, @PathVariable Long idUsuario) {
         return perfilService.guardar(perfilDTO, idUsuario);
     }
+
+    @PutMapping("/actualizar/{id}")
+    public PerfilDTO actualizar(@RequestBody PerfilDTO perfilDTO, @PathVariable Long idPerfil) {
+        return perfilService.actualizar(perfilDTO, idPerfil);
+    }
+
+
+
+
+
 
     @DeleteMapping("/eliminar/{id}")
     public ResponseEntity<String> eliminar(@PathVariable Long id) {
