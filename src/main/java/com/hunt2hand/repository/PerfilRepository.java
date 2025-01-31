@@ -13,9 +13,12 @@ import java.util.Optional;
 
 @Repository
 public interface PerfilRepository extends JpaRepository<Perfil, Long> {
-    Optional<Perfil> findByNombre(String nombre);
+    List<Perfil> findByNombreLikeIgnoreCase(String nombre);
+
+    Perfil findTopByUsuario(Usuario usuario);
 
     @Query("SELECT p FROM Perfil p WHERE p.usuario.username = :username")
     Optional<Perfil> findByUsuarioUsername(@Param("username") String username);
+
 
 }
