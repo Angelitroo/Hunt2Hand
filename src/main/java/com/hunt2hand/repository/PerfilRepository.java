@@ -20,5 +20,4 @@ public interface PerfilRepository extends JpaRepository<Perfil, Long> {
     @Query("SELECT p FROM Perfil p WHERE p.usuario.username = :username")
     Optional<Perfil> findByUsuarioUsername(@Param("username") String username);
 
-
 }

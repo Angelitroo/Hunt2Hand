@@ -2,8 +2,10 @@ package com.hunt2hand.service;
 
 import com.hunt2hand.dto.PerfilDTO;
 import com.hunt2hand.dto.SeguirDTO;
+import com.hunt2hand.dto.ProductoDTO;
 import com.hunt2hand.model.Perfil;
 import com.hunt2hand.model.Seguidores;
+import com.hunt2hand.model.Producto;
 import com.hunt2hand.model.Usuario;
 import com.hunt2hand.repository.PerfilRepository;
 import com.hunt2hand.repository.SeguidoresRepository;
@@ -24,8 +26,6 @@ public class PerfilService {
     private final PerfilRepository perfilRepository;
     private final UsuarioRepository usuarioRepository;
     private final SeguidoresRepository seguidoresRepository;
-
-
     public List<PerfilDTO> getAll() {
         List<Perfil> perfiles = perfilRepository.findAll();
 
@@ -34,16 +34,7 @@ public class PerfilService {
         }
 
         return perfiles.stream()
-                .map(perfil -> {
-                    PerfilDTO dto = new PerfilDTO();
-                    dto.setId(perfil.getId());
-                    dto.setNombre(perfil.getNombre());
-                    dto.setApellido(perfil.getApellido());
-                    dto.setUbicacion(perfil.getUbicacion());
-                    dto.setImagen(perfil.getImagen());
-                    dto.setBaneado(perfil.isBaneado());
-                    return dto;
-                })
+                .map(this::convertirAPerfilDTO)
                 .collect(Collectors.toList());
     }
 
@@ -54,15 +45,7 @@ public class PerfilService {
             return null;
         }
 
-        PerfilDTO dto = new PerfilDTO();
-        dto.setId(perfil.getId());
-        dto.setNombre(perfil.getNombre());
-        dto.setApellido(perfil.getApellido());
-        dto.setUbicacion(perfil.getUbicacion());
-        dto.setImagen(perfil.getImagen());
-        dto.setBaneado(perfil.isBaneado());
-        dto.setUsuario(perfil.getUsuario().getId());
-        return dto;
+        return convertirAPerfilDTO(perfil);
     }
 
 
@@ -88,7 +71,7 @@ public class PerfilService {
     }
 
     public PerfilDTO guardar(PerfilDTO perfilDTO, Long idUsuario) {
-        Usuario usuario = usuarioRepository.findById(idUsuario).orElseThrow(() -> new RuntimeException("Usuario con id " + idUsuario + " no encontrado"));;
+        Usuario usuario = usuarioRepository.findById(idUsuario).orElseThrow(() -> new RuntimeException("Viaje con id " + idUsuario + " no encontrado"));;
 
         Perfil perfil = new Perfil();
         perfil.setId(perfilDTO.getId());
@@ -101,16 +84,7 @@ public class PerfilService {
 
         Perfil perfilGuardado = perfilRepository.save(perfil);
 
-        PerfilDTO dto = new PerfilDTO();
-        dto.setId(perfilGuardado.getId());
-        dto.setNombre(perfilGuardado.getNombre());
-        dto.setApellido(perfilGuardado.getApellido());
-        dto.setUbicacion(perfilGuardado.getUbicacion());
-        dto.setImagen(perfilGuardado.getImagen());
-        dto.setBaneado(perfilGuardado.isBaneado());
-        dto.setUsuario(perfilGuardado.getUsuario().getId());
-
-        return dto;
+        return convertirAPerfilDTO(perfilGuardado);
     }
 
     public PerfilDTO actualizar(PerfilDTO perfilDTO, Long idPerfil) {
@@ -195,4 +169,6 @@ public class PerfilService {
         dto.setUsuario(perfil.getUsuario().getId());
         return dto;
     }
+
+
 }

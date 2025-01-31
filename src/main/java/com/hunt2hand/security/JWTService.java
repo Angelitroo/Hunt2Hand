@@ -30,6 +30,7 @@ public class JWTService {
     public String generateToken(Usuario usuario){
         TokenDataDTO tokenDataDTO = TokenDataDTO
                 .builder()
+                .id(usuario.getId())
                 .username(usuario.getUsername())
                 .rol(usuario.getRol().name())
                 .fecha_creacion(System.currentTimeMillis())
@@ -55,12 +56,28 @@ public class JWTService {
 
     public TokenDataDTO extractTokenData(String token){
         Claims claims = extractDatosToken(token);
-        Map<String, Object> mapa =  (LinkedHashMap<String,Object>) claims.get("tokenDataDTO");
+        Map<String, Object> mapa = (LinkedHashMap<String, Object>) claims.get("tokenDataDTO");
+
+        if (mapa == null) {
+            throw new IllegalArgumentException("Token data is missing");
+        }
+
+        String username = (String) mapa.get("username");
+        Number fechaCreacion = (Number) mapa.get("fecha_creacion");
+        Number fechaExpiracion = (Number) mapa.get("fecha_expiracion");
+        String rol = (String) mapa.get("rol");
+        Number id = (Number) mapa.get("id");
+
+        if (fechaCreacion == null || fechaExpiracion == null || id == null) {
+            throw new IllegalArgumentException("Token data contains null values");
+        }
+
         return TokenDataDTO.builder()
-                .username((String) mapa.get("username"))
-                .fecha_creacion((Long) mapa.get("fecha_creacion"))
-                .fecha_expiracion((Long) mapa.get("fecha_expiracion"))
-                .rol((String) mapa.get("rol"))
+                .username(username)
+                .fecha_creacion(fechaCreacion.longValue())
+                .fecha_expiracion(fechaExpiracion.longValue())
+                .rol(rol)
+                .id(id.longValue())
                 .build();
     }
 

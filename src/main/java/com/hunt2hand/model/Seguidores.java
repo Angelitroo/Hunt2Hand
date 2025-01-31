@@ -12,6 +12,7 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 public class Seguidores {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
