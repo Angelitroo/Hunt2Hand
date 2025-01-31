@@ -17,12 +17,10 @@ public class Seguidores {
     @Column(name = "id")
     private Long id;
 
-    @Id
     @ManyToOne
     @JoinColumn(name = "id_seguidor")
     private Perfil seguidor;
 
-    @Id
     @ManyToOne
     @JoinColumn(name = "id_seguido")
     private Perfil seguido;
