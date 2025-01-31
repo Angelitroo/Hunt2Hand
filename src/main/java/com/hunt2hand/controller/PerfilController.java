@@ -5,6 +5,7 @@ import com.hunt2hand.dto.ProductoDTO;
 import com.hunt2hand.dto.SeguirDTO;
 import com.hunt2hand.model.Seguidores;
 import com.hunt2hand.service.PerfilService;
+import com.hunt2hand.service.ProductoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,9 @@ public class PerfilController {
 
     @Autowired
     private PerfilService perfilService;
+
+    @Autowired
+    private ProductoService productoService;
 
     @GetMapping("/")
     public List<PerfilDTO> getAll() {
@@ -45,11 +49,6 @@ public class PerfilController {
     public PerfilDTO actualizar(@RequestBody PerfilDTO perfilDTO, @PathVariable Long idPerfil) {
         return perfilService.actualizar(perfilDTO, idPerfil);
     }
-
-
-
-
-
 
     @DeleteMapping("/eliminar/{id}")
     public ResponseEntity<String> eliminar(@PathVariable Long id) {
@@ -90,4 +89,5 @@ public class PerfilController {
             return ResponseEntity.notFound().build();
         }
     }
+
 }

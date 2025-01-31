@@ -29,19 +29,8 @@ public class ProductoService {
         }
 
         return productos.stream()
-        .map (Producto -> {
-            ProductoDTO dto = new ProductoDTO();
-            dto.setId(Producto.getId());
-            dto.setNombre(Producto.getNombre());
-            dto.setDescripcion(Producto.getDescripcion());
-            dto.setPrecio(Producto.getPrecio());
-            dto.setEstado(Producto.getEstado());
-            dto.setImagen(Producto.getImagen());
-            dto.setVendido(Producto.getVendido());
-            dto.setPerfil(Producto.getPerfil().getId());
-            return dto;
-        })
-        .collect(Collectors.toList());
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
     }
 
     public ProductoDTO getById(Long id) {
@@ -51,16 +40,7 @@ public class ProductoService {
             return null;
         }
 
-        ProductoDTO dto = new ProductoDTO();
-        dto.setId(producto.getId());
-        dto.setNombre(producto.getNombre());
-        dto.setDescripcion(producto.getDescripcion());
-        dto.setPrecio(producto.getPrecio());
-        dto.setEstado(producto.getEstado());
-        dto.setImagen(producto.getImagen());
-        dto.setVendido(producto.getVendido());
-        dto.setPerfil(producto.getPerfil().getId());
-        return dto;
+        return convertToDto(producto);
     }
 
     public List<ProductoDTO> getByNombre(String nombre) {
@@ -72,18 +52,9 @@ public class ProductoService {
             return Collections.emptyList();
         }
 
-        return productos.stream().map(producto -> {
-            ProductoDTO dto = new ProductoDTO();
-            dto.setId(producto.getId());
-            dto.setNombre(producto.getNombre());
-            dto.setDescripcion(producto.getDescripcion());
-            dto.setPrecio(producto.getPrecio());
-            dto.setEstado(producto.getEstado());
-            dto.setImagen(producto.getImagen());
-            dto.setVendido(producto.getVendido());
-            dto.setPerfil(producto.getPerfil().getId());
-            return dto;
-        }).collect(Collectors.toList());
+        return productos.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
     }
 
     public ProductoDTO guardar(ProductoDTO productoDTO, Long idPerfil) {
@@ -102,18 +73,7 @@ public class ProductoService {
 
         Producto productoGuardado = productoRepository.save(producto);
 
-        ProductoDTO dto = new ProductoDTO();
-        dto.setId(productoGuardado.getId());
-        dto.setNombre(productoGuardado.getNombre());
-        dto.setCategoria(productoGuardado.getCategoria());
-        dto.setDescripcion(productoGuardado.getDescripcion());
-        dto.setPrecio(productoGuardado.getPrecio());
-        dto.setEstado(productoGuardado.getEstado());
-        dto.setImagen(productoGuardado.getImagen());
-        dto.setVendido(productoGuardado.getVendido());
-        dto.setPerfil(productoGuardado.getPerfil().getId());
-
-        return dto;
+        return convertToDto(productoGuardado);
     }
 
     public ProductoDTO actualizar(ProductoDTO productoDTO, Long idProducto) {
@@ -128,17 +88,7 @@ public class ProductoService {
 
         Producto productoActualizado = productoRepository.save(producto);
 
-        ProductoDTO dto = new ProductoDTO();
-        dto.setId(productoActualizado.getId());
-        dto.setNombre(productoActualizado.getNombre());
-        dto.setDescripcion(productoActualizado.getDescripcion());
-        dto.setPrecio(productoActualizado.getPrecio());
-        dto.setEstado(productoActualizado.getEstado());
-        dto.setImagen(productoActualizado.getImagen());
-        dto.setVendido(productoActualizado.getVendido());
-        dto.setPerfil(productoActualizado.getPerfil().getId());
-
-        return dto;
+        return convertToDto(productoActualizado);
     }
 
     public String eliminar(Long id) {
@@ -148,4 +98,25 @@ public class ProductoService {
         productoRepository.deleteById(id);
         return "Eliminado correctamente";
     }
+
+    public List<ProductoDTO> getByPerfilId(Long idPerfil) {
+        List<Producto> productos = productoRepository.findByPerfilId(idPerfil);
+        return productos.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+    public ProductoDTO convertToDto(Producto producto) {
+        ProductoDTO dto = new ProductoDTO();
+        dto.setId(producto.getId());
+        dto.setNombre(producto.getNombre());
+        dto.setDescripcion(producto.getDescripcion());
+        dto.setPrecio(producto.getPrecio());
+        dto.setEstado(producto.getEstado());
+        dto.setImagen(producto.getImagen());
+        dto.setVendido(producto.getVendido());
+        dto.setPerfil(producto.getPerfil().getId());
+        return dto;
+    }
+
 }
