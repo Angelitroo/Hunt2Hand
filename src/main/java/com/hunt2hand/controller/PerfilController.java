@@ -1,7 +1,6 @@
 package com.hunt2hand.controller;
 
 import com.hunt2hand.dto.PerfilDTO;
-import com.hunt2hand.dto.ProductoDTO;
 import com.hunt2hand.dto.SeguirDTO;
 import com.hunt2hand.model.Favoritos;
 import com.hunt2hand.model.Seguidores;
@@ -94,11 +93,14 @@ public class PerfilController {
             return ResponseEntity.notFound().build();
         }
     }
-
     @PostMapping("/favoritos/{idPerfil}/{idProducto}")
-    public ResponseEntity<Favoritos> addProductoToFavoritos(@PathVariable Long idPerfil, @PathVariable Long idProducto) {
-        Favoritos favoritos = favoritosService.addProductoToFavoritos(idPerfil, idProducto);
-        return ResponseEntity.ok(favoritos);
+    public ResponseEntity<?> añadirFavorito(@PathVariable Long idPerfil, @PathVariable Long idProducto) {
+        try {
+            Favoritos favoritos = favoritosService.añadirFavorito(idPerfil, idProducto);
+            return ResponseEntity.ok(favoritos);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
     @GetMapping("/favoritos/{idPerfil}")
@@ -107,4 +109,8 @@ public class PerfilController {
         return ResponseEntity.ok(favoritos);
     }
 
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<String> handleRuntimeException(RuntimeException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
 }

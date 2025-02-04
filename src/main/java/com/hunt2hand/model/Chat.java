@@ -4,24 +4,29 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "favoritos", schema = "hunt2hand")
+@Table(name = "chat", schema = "hunt2hand")
 @Getter
 @Setter
 @EqualsAndHashCode
 @AllArgsConstructor
-@NoArgsConstructor
 @ToString
-public class Favoritos {
+public class Chat {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "id_perfil", nullable = false)
-    private Perfil perfil;
+    @JoinColumn(name = "id_creador", nullable = false)
+    private Perfil creador;
 
     @ManyToOne
-    @JoinColumn(name = "id_producto", nullable = false)
-    private Producto producto;
+    @JoinColumn(name = "id_receptor", nullable = false)
+    private Perfil receptor;
+
+
+    public Chat() {
+
+    }
 }
+
