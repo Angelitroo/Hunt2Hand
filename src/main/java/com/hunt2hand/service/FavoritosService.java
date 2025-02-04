@@ -21,7 +21,7 @@ public class FavoritosService {
     private final PerfilRepository perfilRepository;
     private final ProductoRepository productoRepository;
 
-    public Favoritos addProductoToFavoritos(Long idPerfil, Long idProducto) {
+    public Favoritos añadirFavorito(Long idPerfil, Long idProducto) {
         Perfil perfil = perfilRepository.findById(idPerfil)
                 .orElseThrow(() -> new RuntimeException("Perfil con id " + idPerfil + " no encontrado"));
         Producto producto = productoRepository.findById(idProducto)

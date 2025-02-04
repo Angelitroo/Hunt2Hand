@@ -1,7 +1,6 @@
 package com.hunt2hand.controller;
 
 import com.hunt2hand.dto.PerfilDTO;
-import com.hunt2hand.dto.ProductoDTO;
 import com.hunt2hand.dto.SeguirDTO;
 import com.hunt2hand.model.Favoritos;
 import com.hunt2hand.model.Seguidores;
@@ -96,8 +95,8 @@ public class PerfilController {
     }
 
     @PostMapping("/favoritos/{idPerfil}/{idProducto}")
-    public ResponseEntity<Favoritos> addProductoToFavoritos(@PathVariable Long idPerfil, @PathVariable Long idProducto) {
-        Favoritos favoritos = favoritosService.addProductoToFavoritos(idPerfil, idProducto);
+    public ResponseEntity<Favoritos> añadirFavorito(@PathVariable Long idPerfil, @PathVariable Long idProducto) {
+        Favoritos favoritos = favoritosService.añadirFavorito(idPerfil, idProducto);
         return ResponseEntity.ok(favoritos);
     }
 
