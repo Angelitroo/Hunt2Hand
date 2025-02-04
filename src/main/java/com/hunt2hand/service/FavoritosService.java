@@ -39,6 +39,14 @@ public class FavoritosService {
         return favoritosRepository.save(favoritos);
     }
 
+    public String eliminar(Long id) {
+        if (!productoRepository.existsById(id)) {
+            throw new IllegalArgumentException("El id no existe");
+        }
+        productoRepository.deleteById(id);
+        return "Eliminado correctamente";
+    }
+
     public List<Favoritos> getFavoritosByPerfil(Long idPerfil) {
         Perfil perfil = perfilRepository.findById(idPerfil)
                 .orElseThrow(() -> new RuntimeException("Perfil con id " + idPerfil + " no encontrado"));
