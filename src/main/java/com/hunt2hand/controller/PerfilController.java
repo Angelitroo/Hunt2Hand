@@ -3,7 +3,9 @@ package com.hunt2hand.controller;
 import com.hunt2hand.dto.PerfilDTO;
 import com.hunt2hand.dto.ProductoDTO;
 import com.hunt2hand.dto.SeguirDTO;
+import com.hunt2hand.model.Favoritos;
 import com.hunt2hand.model.Seguidores;
+import com.hunt2hand.service.FavoritosService;
 import com.hunt2hand.service.PerfilService;
 import com.hunt2hand.service.ProductoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,9 @@ public class PerfilController {
 
     @Autowired
     private ProductoService productoService;
+
+    @Autowired
+    private FavoritosService favoritosService;
 
     @GetMapping("/")
     public List<PerfilDTO> getAll() {
@@ -88,6 +93,18 @@ public class PerfilController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @PostMapping("/favoritos/{idPerfil}/{idProducto}")
+    public ResponseEntity<Favoritos> addProductoToFavoritos(@PathVariable Long idPerfil, @PathVariable Long idProducto) {
+        Favoritos favoritos = favoritosService.addProductoToFavoritos(idPerfil, idProducto);
+        return ResponseEntity.ok(favoritos);
+    }
+
+    @GetMapping("/favoritos/{idPerfil}")
+    public ResponseEntity<List<Favoritos>> getFavoritosByPerfil(@PathVariable Long idPerfil) {
+        List<Favoritos> favoritos = favoritosService.getFavoritosByPerfil(idPerfil);
+        return ResponseEntity.ok(favoritos);
     }
 
 }
