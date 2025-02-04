@@ -1,6 +1,7 @@
 package com.hunt2hand.controller;
 
 import com.hunt2hand.dto.PerfilDTO;
+import com.hunt2hand.dto.ProductoDTO;
 import com.hunt2hand.dto.SeguirDTO;
 import com.hunt2hand.model.Favoritos;
 import com.hunt2hand.model.Seguidores;
@@ -49,10 +50,20 @@ public class PerfilController {
         return perfilService.guardar(perfilDTO, idUsuario);
     }
 
-    @PutMapping("/actualizar/{id}")
-    public PerfilDTO actualizar(@RequestBody PerfilDTO perfilDTO, @PathVariable Long idPerfil) {
-        return perfilService.actualizar(perfilDTO, idPerfil);
+    @GetMapping("actualizado/{id}")
+    public PerfilActualizarDTO getActualizadoById(@PathVariable Long id) {
+        return perfilService.getActualizadoById(id);
     }
+
+    @PutMapping("/actualizar/{id}")
+    public PerfilActualizarDTO actualizar(@RequestBody PerfilActualizarDTO perfilActualizarDTO, @PathVariable Long id) {
+        return perfilService.actualizar(perfilActualizarDTO, id);
+    }
+
+
+
+
+
 
     @DeleteMapping("/eliminar/{id}")
     public ResponseEntity<String> eliminar(@PathVariable Long id) {

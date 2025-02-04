@@ -1,5 +1,6 @@
 package com.hunt2hand.service;
 
+import com.hunt2hand.dto.PerfilActualizarDTO;
 import com.hunt2hand.dto.PerfilDTO;
 import com.hunt2hand.dto.SeguirDTO;
 import com.hunt2hand.dto.ProductoDTO;
@@ -84,27 +85,14 @@ public class PerfilService {
 
         Perfil perfilGuardado = perfilRepository.save(perfil);
 
-        return convertirAPerfilDTO(perfilGuardado);
-    }
-
-    public PerfilDTO actualizar(PerfilDTO perfilDTO, Long idPerfil) {
-        Perfil perfil = perfilRepository.findById(idPerfil).orElseThrow(() -> new IllegalArgumentException("El id no existe"));
-
-        perfil.setNombre(perfilDTO.getNombre());
-        perfil.setApellido(perfilDTO.getApellido());
-        perfil.setUbicacion(perfilDTO.getUbicacion());
-        perfil.setImagen(perfilDTO.getImagen());
-        perfil.setBaneado(perfilDTO.getBaneado());
-
-        Perfil perfilActualizado = perfilRepository.save(perfil);
-
         PerfilDTO dto = new PerfilDTO();
-        dto.setId(perfilActualizado.getId());
-        dto.setNombre(perfilActualizado.getNombre());
-        dto.setApellido(perfilActualizado.getApellido());
-        dto.setUbicacion(perfilActualizado.getUbicacion());
-        dto.setImagen(perfilActualizado.getImagen());
-        dto.setBaneado(perfilActualizado.isBaneado());
+        dto.setId(perfilGuardado.getId());
+        dto.setNombre(perfilGuardado.getNombre());
+        dto.setApellido(perfilGuardado.getApellido());
+        dto.setUbicacion(perfilGuardado.getUbicacion());
+        dto.setImagen(perfilGuardado.getImagen());
+        dto.setBaneado(perfilGuardado.isBaneado());
+        dto.setUsuario(perfilGuardado.getUsuario().getId());
 
         return dto;
     }
@@ -170,5 +158,50 @@ public class PerfilService {
         return dto;
     }
 
+
+
+
+
+    public PerfilActualizarDTO actualizar(PerfilActualizarDTO perfilActualizarDTO, Long idPerfil) {
+        Perfil perfil = perfilRepository.findById(idPerfil).orElseThrow(() -> new IllegalArgumentException("El id no existe"));
+
+        perfil.setNombre(perfilActualizarDTO.getNombre());
+        perfil.setApellido(perfilActualizarDTO.getApellido());
+        perfil.setUbicacion(perfilActualizarDTO.getUbicacion());
+        perfil.setImagen(perfilActualizarDTO.getImagen());
+        perfil.getUsuario().setUsername(perfilActualizarDTO.getUsername());
+        perfil.getUsuario().setPassword(perfilActualizarDTO.getPassword());
+
+        Perfil perfilActualizado = perfilRepository.save(perfil);
+
+        PerfilActualizarDTO dto = new PerfilActualizarDTO();
+        dto.setId(perfilActualizado.getId());
+        dto.setNombre(perfilActualizado.getNombre());
+        dto.setApellido(perfilActualizado.getApellido());
+        dto.setUbicacion(perfilActualizado.getUbicacion());
+        dto.setImagen(perfilActualizado.getImagen());
+        dto.setUsername(perfilActualizado.getUsuario().getUsername());
+        dto.setPassword(perfilActualizado.getUsuario().getPassword());
+
+        return dto;
+    }
+
+    public PerfilActualizarDTO getActualizadoById(Long id) {
+        Perfil perfil = perfilRepository.findById(id).orElse(null);
+
+        if (perfil == null) {
+            return null;
+        }
+
+        PerfilActualizarDTO dto = new PerfilActualizarDTO();
+        dto.setId(perfil.getId());
+        dto.setNombre(perfil.getNombre());
+        dto.setApellido(perfil.getApellido());
+        dto.setUbicacion(perfil.getUbicacion());
+        dto.setImagen(perfil.getImagen());
+        dto.setUsername(perfil.getUsuario().getUsername());
+        dto.setPassword(perfil.getUsuario().getPassword());
+        return dto;
+    }
 
 }
