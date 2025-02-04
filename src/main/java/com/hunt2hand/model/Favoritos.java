@@ -3,7 +3,6 @@ package com.hunt2hand.model;
 import jakarta.persistence.*;
 import lombok.*;
 
-
 @Entity
 @Table(name = "favoritos", schema = "hunt2hand")
 @Getter
@@ -22,7 +21,7 @@ public class Favoritos {
     @JoinColumn(name = "id_perfil", nullable = false)
     private Perfil perfil;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "id_producto", nullable = false)
     private Producto producto;
 }

@@ -27,6 +27,11 @@ public class FavoritosService {
         Producto producto = productoRepository.findById(idProducto)
                 .orElseThrow(() -> new RuntimeException("Producto con id " + idProducto + " no encontrado"));
 
+        // Verificar si el favorito ya existe
+        if (favoritosRepository.existsByPerfilAndProducto(perfil, producto)) {
+            throw new RuntimeException("El producto ya está en la lista de favoritos del perfil");
+        }
+
         Favoritos favoritos = new Favoritos();
         favoritos.setPerfil(perfil);
         favoritos.setProducto(producto);

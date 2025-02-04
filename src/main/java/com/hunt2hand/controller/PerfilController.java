@@ -93,13 +93,15 @@ public class PerfilController {
             return ResponseEntity.notFound().build();
         }
     }
-
     @PostMapping("/favoritos/{idPerfil}/{idProducto}")
-    public ResponseEntity<Favoritos> añadirFavorito(@PathVariable Long idPerfil, @PathVariable Long idProducto) {
-        Favoritos favoritos = favoritosService.añadirFavorito(idPerfil, idProducto);
-        return ResponseEntity.ok(favoritos);
+    public ResponseEntity<?> añadirFavorito(@PathVariable Long idPerfil, @PathVariable Long idProducto) {
+        try {
+            Favoritos favoritos = favoritosService.añadirFavorito(idPerfil, idProducto);
+            return ResponseEntity.ok(favoritos);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
-
 
     @GetMapping("/favoritos/{idPerfil}")
     public ResponseEntity<List<Favoritos>> getFavoritosByPerfil(@PathVariable Long idPerfil) {
@@ -107,4 +109,8 @@ public class PerfilController {
         return ResponseEntity.ok(favoritos);
     }
 
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<String> handleRuntimeException(RuntimeException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
 }
