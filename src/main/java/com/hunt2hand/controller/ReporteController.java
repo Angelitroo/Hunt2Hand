@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Set;
 
 @RestController
-@RequestMapping("/reporte")
+@RequestMapping("/reportes")
 public class ReporteController {
 
     @Autowired
@@ -26,7 +26,7 @@ public class ReporteController {
         return ResponseEntity.ok(reportes);
     }
 
-    @PostMapping("/crear")
+    @PostMapping("/crear/{}")
     public ResponseEntity<ReporteDTO> crearReporte(@RequestBody ReporteDTO reporteDTO) {
         ReporteDTO reporteCreado = reporteService.crearReporte(reporteDTO);
         return ResponseEntity.ok(reporteCreado);
