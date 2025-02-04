@@ -26,6 +26,7 @@ public class PerfilService {
     private final PerfilRepository perfilRepository;
     private final UsuarioRepository usuarioRepository;
     private final SeguidoresRepository seguidoresRepository;
+
     public List<PerfilDTO> getAll() {
         List<Perfil> perfiles = perfilRepository.findAll();
 
@@ -88,7 +89,7 @@ public class PerfilService {
     }
 
     public PerfilDTO actualizar(PerfilDTO perfilDTO, Long idPerfil) {
-        Perfil perfil = perfilRepository.findById(idPerfil).orElseThrow(() -> new IllegalArgumentException("El id no existe"));
+        Perfil perfil = perfilRepository.findById(idPerfil).orElseThrow(() -> new RuntimeException("Perfil con id " + idPerfil + " no encontrado"));
 
         perfil.setNombre(perfilDTO.getNombre());
         perfil.setApellido(perfilDTO.getApellido());
@@ -98,15 +99,7 @@ public class PerfilService {
 
         Perfil perfilActualizado = perfilRepository.save(perfil);
 
-        PerfilDTO dto = new PerfilDTO();
-        dto.setId(perfilActualizado.getId());
-        dto.setNombre(perfilActualizado.getNombre());
-        dto.setApellido(perfilActualizado.getApellido());
-        dto.setUbicacion(perfilActualizado.getUbicacion());
-        dto.setImagen(perfilActualizado.getImagen());
-        dto.setBaneado(perfilActualizado.isBaneado());
-
-        return dto;
+        return convertirAPerfilDTO(perfilActualizado);
     }
 
     public String eliminar(Long id) {
