@@ -100,6 +100,7 @@ public class PerfilController {
         return ResponseEntity.ok(favoritos);
     }
 
+
     @GetMapping("/favoritos/{idPerfil}")
     public ResponseEntity<List<Favoritos>> getFavoritosByPerfil(@PathVariable Long idPerfil) {
         List<Favoritos> favoritos = favoritosService.getFavoritosByPerfil(idPerfil);
