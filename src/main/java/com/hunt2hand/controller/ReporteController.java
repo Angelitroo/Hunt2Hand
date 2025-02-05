@@ -1,11 +1,14 @@
 package com.hunt2hand.controller;
 
+import com.hunt2hand.dto.PerfilDTO;
+import com.hunt2hand.dto.ProductoDTO;
 import com.hunt2hand.dto.ReporteDTO;
 import com.hunt2hand.service.ReporteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -15,14 +18,15 @@ public class ReporteController {
     @Autowired
     private ReporteService reporteService;
 
-    @GetMapping
-    public Set<ReporteDTO> getAllReportes() {
-        return reporteService.getAllReportes();
+    @GetMapping("/")
+    public List<ReporteDTO> getAll() {
+        return reporteService.getAll();
     }
 
-    @GetMapping("/{nombre_reportado}")
-    public ResponseEntity<Set<ReporteDTO>> getReportesByNombreReportado(@PathVariable String nombre_reportado) {
-        Set<ReporteDTO> reportes = reporteService.getReportesByNombreReportado(nombre_reportado);
+    @GetMapping({"/buscar/{nombre}"})
+    public ResponseEntity<List<ReporteDTO>> buscarPorNombre(@PathVariable String nombre) {
+        List<ReporteDTO> reportes = reporteService.getByNombre(nombre);
+
         return ResponseEntity.ok(reportes);
     }
 
