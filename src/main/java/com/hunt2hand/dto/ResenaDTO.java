@@ -5,7 +5,7 @@ import jakarta.validation.constraints.Min;
 import lombok.*;
 
 @Data
-public class ReseñaDTO {
+public class ResenaDTO {
     private Long id;
 
     @Min(1)

@@ -1,30 +1,35 @@
 package com.hunt2hand.service;
 
 import com.hunt2hand.dto.MensajeDTO;
+import com.hunt2hand.exception.RecursoNoEncontrado;
 import com.hunt2hand.model.Chat;
 import com.hunt2hand.model.Mensaje;
 import com.hunt2hand.model.Perfil;
 import com.hunt2hand.repository.ChatRepository;
 import com.hunt2hand.repository.MensajeRepository;
+import com.hunt2hand.repository.PerfilRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Validated
 @RequiredArgsConstructor
 public class MensajeService {
     private final MensajeRepository mensajeRepository;
     private final ChatRepository chatRepository;
+    private final PerfilRepository perfilRepository;
 
     public MensajeDTO enviarMensaje(MensajeDTO mensajeDTO) {
-        Perfil emisor = new Perfil();
-        emisor.setId(mensajeDTO.getIdEmisor());
+        Perfil emisor = perfilRepository.findById(mensajeDTO.getIdEmisor())
+                .orElseThrow(() -> new RecursoNoEncontrado("Perfil emisor no encontrado"));
 
-        Perfil receptor = new Perfil();
-        receptor.setId(mensajeDTO.getIdReceptor());
+        Perfil receptor = perfilRepository.findById(mensajeDTO.getIdReceptor())
+                .orElseThrow(() -> new RecursoNoEncontrado("Perfil receptor no encontrado"));
 
         Chat chat = chatRepository.findChatBetweenUsers(emisor, receptor)
                 .orElseGet(() -> {
@@ -48,19 +53,31 @@ public class MensajeService {
     }
 
     public List<MensajeDTO> obtenerMensajesPorChat(Long idChat) {
-        return mensajeRepository.findMessagesByChatId(idChat).stream()
+        List<Mensaje> mensajes = mensajeRepository.findMessagesByChatId(idChat);
+        if (mensajes.isEmpty()) {
+            throw new RecursoNoEncontrado("No se encontraron mensajes para el chat con ID " + idChat);
+        }
+        return mensajes.stream()
                 .map(this::convertirAMensajeDTO)
                 .collect(Collectors.toList());
     }
 
     public List<MensajeDTO> obtenerMensajesEnviados(Long idUsuario) {
-        return mensajeRepository.findSentMessages(idUsuario).stream()
+        List<Mensaje> mensajes = mensajeRepository.findSentMessages(idUsuario);
+        if (mensajes.isEmpty()) {
+            throw new RecursoNoEncontrado("No se encontraron mensajes enviados por el usuario con ID " + idUsuario);
+        }
+        return mensajes.stream()
                 .map(this::convertirAMensajeDTO)
                 .collect(Collectors.toList());
     }
 
     public List<MensajeDTO> obtenerMensajesRecibidos(Long idUsuario) {
-        return mensajeRepository.findReceivedMessages(idUsuario).stream()
+        List<Mensaje> mensajes = mensajeRepository.findReceivedMessages(idUsuario);
+        if (mensajes.isEmpty()) {
+            throw new RecursoNoEncontrado("No se encontraron mensajes recibidos por el usuario con ID " + idUsuario);
+        }
+        return mensajes.stream()
                 .map(this::convertirAMensajeDTO)
                 .collect(Collectors.toList());
     }

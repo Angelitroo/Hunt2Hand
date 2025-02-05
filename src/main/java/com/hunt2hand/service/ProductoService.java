@@ -1,21 +1,20 @@
 package com.hunt2hand.service;
 
-import com.hunt2hand.dto.PerfilDTO;
 import com.hunt2hand.dto.ProductoDTO;
+import com.hunt2hand.exception.RecursoNoEncontrado;
 import com.hunt2hand.model.Perfil;
 import com.hunt2hand.model.Producto;
 import com.hunt2hand.repository.PerfilRepository;
 import com.hunt2hand.repository.ProductoRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@Validated
 @AllArgsConstructor
 public class ProductoService {
     private final ProductoRepository productoRepository;
@@ -24,8 +23,8 @@ public class ProductoService {
     public List<ProductoDTO> getAll() {
         List<Producto> productos = productoRepository.findAll();
 
-        if (productos == null) {
-            return Collections.emptyList();
+        if (productos.isEmpty()) {
+            throw new RecursoNoEncontrado("No se encontraron productos");
         }
 
         return productos.stream()
@@ -34,11 +33,8 @@ public class ProductoService {
     }
 
     public ProductoDTO getById(Long id) {
-        Producto producto = productoRepository.findById(id).orElse(null);
-
-        if (producto == null) {
-            return null;
-        }
+        Producto producto = productoRepository.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontrado("Producto con id " + id + " no encontrado"));
 
         return convertToDto(producto);
     }
@@ -48,8 +44,20 @@ public class ProductoService {
 
         List<Producto> productos = productoRepository.findByNombreLikeIgnoreCase(patron);
 
-        if (productos == null) {
-            return Collections.emptyList();
+        if (productos == null || productos.isEmpty()) {
+            throw new RecursoNoEncontrado("No se encontraron productos con el nombre: " + nombre);
+        }
+
+        return productos.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<ProductoDTO> getByCategoria(String categoria) {
+        List<Producto> productos = productoRepository.findByCategoria(categoria);
+
+        if (productos == null || productos.isEmpty()) {
+            throw new RecursoNoEncontrado("No se encontraron productos en la categoría: " + categoria);
         }
 
         return productos.stream()
@@ -58,7 +66,8 @@ public class ProductoService {
     }
 
     public ProductoDTO guardar(ProductoDTO productoDTO, Long idPerfil) {
-        Perfil perfil = perfilRepository.findById(idPerfil).orElseThrow(() -> new RuntimeException("Usuario con id " + idPerfil + " no encontrado"));
+        Perfil perfil = perfilRepository.findById(idPerfil)
+                .orElseThrow(() -> new RecursoNoEncontrado("Usuario con id " + idPerfil + " no encontrado"));
 
         Producto producto = new Producto();
         producto.setId(productoDTO.getId());
@@ -77,7 +86,8 @@ public class ProductoService {
     }
 
     public ProductoDTO actualizar(ProductoDTO productoDTO, Long idProducto) {
-        Producto producto = productoRepository.findById(idProducto).orElseThrow(() -> new IllegalArgumentException("El id no existe"));
+        Producto producto = productoRepository.findById(idProducto)
+                .orElseThrow(() -> new RecursoNoEncontrado("Producto con id " + idProducto + " no encontrado"));
 
         producto.setNombre(productoDTO.getNombre());
         producto.setDescripcion(productoDTO.getDescripcion());
@@ -93,7 +103,7 @@ public class ProductoService {
 
     public String eliminar(Long id) {
         if (!productoRepository.existsById(id)) {
-            throw new IllegalArgumentException("El id no existe");
+            throw new RecursoNoEncontrado("Producto con id " + id + " no encontrado");
         }
         productoRepository.deleteById(id);
         return "Eliminado correctamente";
@@ -101,6 +111,11 @@ public class ProductoService {
 
     public List<ProductoDTO> getByPerfilId(Long idPerfil) {
         List<Producto> productos = productoRepository.findByPerfilId(idPerfil);
+
+        if (productos == null || productos.isEmpty()) {
+            throw new RecursoNoEncontrado("No se encontraron productos para el perfil con id: " + idPerfil);
+        }
+
         return productos.stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
@@ -118,5 +133,4 @@ public class ProductoService {
         dto.setPerfil(producto.getPerfil().getId());
         return dto;
     }
-
 }

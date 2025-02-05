@@ -45,6 +45,13 @@ public class ProductoController {
         return ResponseEntity.ok(productos);
     }
 
+    @GetMapping({"/categoria/{categoria}"})
+    public ResponseEntity<List<ProductoDTO>> buscarPorCategoria(@PathVariable String categoria) {
+        List<ProductoDTO> productos = productoService.getByCategoria(categoria);
+
+        return ResponseEntity.ok(productos);
+    }
+
     @PostMapping({"/guardar/{idPerfil}"})
     public ProductoDTO guardar(@RequestBody ProductoDTO producto, @PathVariable Long idPerfil) {
         return productoService.guardar(producto, idPerfil);
