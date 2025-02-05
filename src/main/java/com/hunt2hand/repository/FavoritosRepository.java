@@ -6,9 +6,11 @@ import com.hunt2hand.model.Producto;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface FavoritosRepository extends JpaRepository<Favoritos, Long> {
     List<Favoritos> findByPerfil(Perfil perfil);
     boolean existsByPerfilAndProducto(Perfil perfil, Producto producto);
+    Optional<Favoritos> findByPerfilAndProducto(Perfil perfil, Producto producto);
 
 }

@@ -27,7 +27,6 @@ public class FavoritosService {
         Producto producto = productoRepository.findById(idProducto)
                 .orElseThrow(() -> new RuntimeException("Producto con id " + idProducto + " no encontrado"));
 
-        // Verificar si el favorito ya existe
         if (favoritosRepository.existsByPerfilAndProducto(perfil, producto)) {
             throw new RuntimeException("El producto ya está en la lista de favoritos del perfil");
         }
@@ -39,17 +38,30 @@ public class FavoritosService {
         return favoritosRepository.save(favoritos);
     }
 
-    public String eliminar(Long id) {
-        if (!productoRepository.existsById(id)) {
-            throw new IllegalArgumentException("El id no existe");
-        }
-        productoRepository.deleteById(id);
-        return "Eliminado correctamente";
+    public void eliminarFavorito(Long idPerfil, Long idProducto) {
+        Perfil perfil = perfilRepository.findById(idPerfil)
+                .orElseThrow(() -> new RuntimeException("Perfil con id " + idPerfil + " no encontrado"));
+        Producto producto = productoRepository.findById(idProducto)
+                .orElseThrow(() -> new RuntimeException("Producto con id " + idProducto + " no encontrado"));
+
+        Favoritos favorito = favoritosRepository.findByPerfilAndProducto(perfil, producto)
+                .orElseThrow(() -> new RuntimeException("El favorito no existe"));
+
+        favoritosRepository.delete(favorito);
     }
 
     public List<Favoritos> getFavoritosByPerfil(Long idPerfil) {
         Perfil perfil = perfilRepository.findById(idPerfil)
                 .orElseThrow(() -> new RuntimeException("Perfil con id " + idPerfil + " no encontrado"));
         return favoritosRepository.findByPerfil(perfil);
+    }
+
+    public boolean esFavorito(Long idPerfil, Long idProducto) {
+        Perfil perfil = perfilRepository.findById(idPerfil)
+                .orElseThrow(() -> new RuntimeException("Perfil con id " + idPerfil + " no encontrado"));
+        Producto producto = productoRepository.findById(idProducto)
+                .orElseThrow(() -> new RuntimeException("Producto con id " + idProducto + " no encontrado"));
+
+        return favoritosRepository.existsByPerfilAndProducto(perfil, producto);
     }
 }

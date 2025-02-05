@@ -117,7 +117,25 @@ public class PerfilController {
         return ResponseEntity.ok(favoritos);
     }
 
-    @DeleteMapping
+    @DeleteMapping("/favoritos/eliminar/{idPerfil}/{idProducto}")
+    public ResponseEntity<?> eliminarFavorito(@PathVariable Long idPerfil, @PathVariable Long idProducto) {
+        try {
+            favoritosService.eliminarFavorito(idPerfil, idProducto);
+            return ResponseEntity.ok("Favorito eliminado exitosamente");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/favoritos/comprobar/{idPerfil}/{idProducto}")
+    public ResponseEntity<Boolean> esFavorito(@PathVariable Long idPerfil, @PathVariable Long idProducto) {
+        try {
+            boolean esFavorito = favoritosService.esFavorito(idPerfil, idProducto);
+            return ResponseEntity.ok(esFavorito);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(false);
+        }
+    }
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<String> handleRuntimeException(RuntimeException ex) {
