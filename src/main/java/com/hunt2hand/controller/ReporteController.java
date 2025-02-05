@@ -1,7 +1,5 @@
 package com.hunt2hand.controller;
 
-import com.hunt2hand.dto.PerfilDTO;
-import com.hunt2hand.dto.ProductoDTO;
 import com.hunt2hand.dto.ReporteDTO;
 import com.hunt2hand.service.ReporteService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/reportes")
@@ -23,10 +20,9 @@ public class ReporteController {
         return reporteService.getAll();
     }
 
-    @GetMapping({"/buscar/{nombre}"})
-    public ResponseEntity<List<ReporteDTO>> buscarPorNombre(@PathVariable String nombre) {
-        List<ReporteDTO> reportes = reporteService.getByNombre(nombre);
-
+    @GetMapping("/buscar/{nombre}")
+    public ResponseEntity<List<ReporteDTO>> getReportesByNombreReportado(@RequestParam String nombre) {
+        List<ReporteDTO> reportes = reporteService.getByNombreReportado(nombre);
         return ResponseEntity.ok(reportes);
     }
 

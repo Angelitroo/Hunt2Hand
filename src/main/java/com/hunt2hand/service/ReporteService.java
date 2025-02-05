@@ -1,10 +1,8 @@
 package com.hunt2hand.service;
 
-import com.hunt2hand.dto.ProductoDTO;
 import com.hunt2hand.dto.ReporteDTO;
 import com.hunt2hand.enums.Motivo;
 import com.hunt2hand.model.Perfil;
-import com.hunt2hand.model.Producto;
 import com.hunt2hand.model.Reporte;
 import com.hunt2hand.repository.ReporteRepository;
 import org.springframework.stereotype.Service;
@@ -33,10 +31,10 @@ public class ReporteService {
                 .collect(Collectors.toList());
     }
 
-    public List<ReporteDTO> getByNombre(String nombre) {
+    public List<ReporteDTO> getByNombreReportado(String nombre) {
         String patron = nombre + "%";
 
-        List<Reporte> reportes = reporteRepository.findByNombreLikeIgnoreCase(patron);
+        List<Reporte> reportes = reporteRepository.findByReportado_NombreLikeIgnoreCase(patron);
 
         if (reportes == null) {
             return Collections.emptyList();
