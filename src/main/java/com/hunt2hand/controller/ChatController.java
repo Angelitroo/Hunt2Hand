@@ -1,6 +1,7 @@
 package com.hunt2hand.controller;
 
 import com.hunt2hand.dto.ChatDTO;
+import com.hunt2hand.dto.CrearChatDTO;
 import com.hunt2hand.service.ChatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,8 +16,8 @@ public class ChatController {
     private final ChatService chatService;
 
     @PostMapping("/crear")
-    public ResponseEntity<ChatDTO> crearChat(@RequestBody ChatDTO chatDTO) {
-        ChatDTO chatCreado = chatService.crearChat(chatDTO);
+    public ResponseEntity<CrearChatDTO> crearChat(@RequestBody CrearChatDTO crearChatDTO) {
+        CrearChatDTO chatCreado = chatService.crearChat(crearChatDTO);
         return chatCreado != null ? ResponseEntity.ok(chatCreado) : ResponseEntity.badRequest().build();
     }
 

@@ -1,6 +1,7 @@
 package com.hunt2hand.service;
 
 import com.hunt2hand.dto.ChatDTO;
+import com.hunt2hand.dto.CrearChatDTO;
 import com.hunt2hand.exception.RecursoNoEncontrado;
 import com.hunt2hand.model.Chat;
 import com.hunt2hand.model.Perfil;
@@ -20,10 +21,10 @@ public class ChatService {
     private final ChatRepository chatRepository;
     private final PerfilRepository perfilRepository;
 
-    public ChatDTO crearChat(ChatDTO chatDTO) {
-        Perfil usuario1 = perfilRepository.findById(chatDTO.getId_creador())
+    public CrearChatDTO crearChat(CrearChatDTO crearChatDTO) {
+        Perfil usuario1 = perfilRepository.findById(crearChatDTO.getId_creador())
                 .orElseThrow(() -> new RecursoNoEncontrado("Usuario creador no encontrado"));
-        Perfil usuario2 = perfilRepository.findById(chatDTO.getId_receptor())
+        Perfil usuario2 = perfilRepository.findById(crearChatDTO.getId_receptor())
                 .orElseThrow(() -> new RecursoNoEncontrado("Usuario receptor no encontrado"));
 
         Chat chat = new Chat();
@@ -31,7 +32,11 @@ public class ChatService {
         chat.setReceptor(usuario2);
         chat = chatRepository.save(chat);
 
-        return convertirAChatDTO(chat);
+        CrearChatDTO dto = new CrearChatDTO();
+        dto.setId(chat.getId());
+        dto.setId_creador(chat.getCreador().getId());
+        dto.setId_receptor(chat.getReceptor().getId());
+        return dto;
     }
 
     public List<ChatDTO> getChatById(Long idUsuario) {

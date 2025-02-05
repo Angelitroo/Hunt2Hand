@@ -10,5 +10,5 @@ public class MensajeDTO {
     private Long idEmisor;
     private Long idReceptor;
     private String contenido;
-    private LocalDateTime fechaEnvio;
+    private String fecha;
 }

@@ -11,12 +11,12 @@ import java.util.List;
 @Repository
 public interface MensajeRepository extends JpaRepository<Mensaje, Long> {
 
-    @Query("SELECT m FROM Mensaje m WHERE m.chat.id = :chatId ORDER BY m.fecha, m.hora")
+    @Query("SELECT m FROM Mensaje m WHERE m.chat.id = :chatId ORDER BY m.fecha")
     List<Mensaje> findMessagesByChatId(@Param("chatId") Long chatId);
 
-    @Query("SELECT m FROM Mensaje m WHERE m.emisor.id = :userId ORDER BY m.fecha, m.hora")
+    @Query("SELECT m FROM Mensaje m WHERE m.emisor.id = :userId ORDER BY m.fecha")
     List<Mensaje> findSentMessages(@Param("userId") Long userId);
 
-    @Query("SELECT m FROM Mensaje m WHERE m.receptor.id = :userId ORDER BY m.fecha, m.hora")
+    @Query("SELECT m FROM Mensaje m WHERE m.receptor.id = :userId ORDER BY m.fecha")
     List<Mensaje> findReceivedMessages(@Param("userId") Long userId);
 }

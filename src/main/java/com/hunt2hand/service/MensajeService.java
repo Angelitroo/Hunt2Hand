@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,24 +33,21 @@ public class MensajeService {
         Perfil receptor = perfilRepository.findById(mensajeDTO.getIdReceptor())
                 .orElseThrow(() -> new RecursoNoEncontrado("Perfil receptor no encontrado"));
 
-        Chat chat = chatRepository.findChatBetweenUsers(emisor, receptor)
-                .orElseGet(() -> {
-                    Chat nuevoChat = new Chat();
-                    nuevoChat.setCreador(emisor);
-                    nuevoChat.setReceptor(receptor);
-                    return chatRepository.save(nuevoChat);
-                });
+        Chat chat = chatRepository.findById(mensajeDTO.getIdChat())
+                .orElseThrow(() -> new RecursoNoEncontrado("Chat no encontrado"));
+
 
         Mensaje mensaje = new Mensaje();
         mensaje.setChat(chat);
         mensaje.setEmisor(emisor);
         mensaje.setReceptor(receptor);
         mensaje.setContenido(mensajeDTO.getContenido());
-        mensaje.setFecha(mensajeDTO.getFechaEnvio().toLocalDate());
-        mensaje.setHora(mensajeDTO.getFechaEnvio().toLocalTime());
-
-        mensaje = mensajeRepository.save(mensaje);
-
+        try {
+            mensaje.setFecha(LocalDateTime.parse(mensajeDTO.getFecha(), DateTimeFormatter.ISO_DATE_TIME));
+        } catch (DateTimeParseException e) {
+            throw new IllegalArgumentException("Formato de fecha inválido");
+        }
+        mensajeRepository.save(mensaje);
         return convertirAMensajeDTO(mensaje);
     }
 
@@ -89,7 +88,8 @@ public class MensajeService {
         dto.setIdEmisor(mensaje.getEmisor().getId());
         dto.setIdReceptor(mensaje.getReceptor().getId());
         dto.setContenido(mensaje.getContenido());
-        dto.setFechaEnvio(LocalDateTime.of(mensaje.getFecha(), mensaje.getHora()));
+        dto.setFecha(mensaje.getFecha().toString());
         return dto;
     }
+
 }
