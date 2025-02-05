@@ -48,9 +48,9 @@ public class ReporteService {
     public ReporteDTO crearReporte(ReporteDTO reporteDTO) {
         Reporte reporte = new Reporte();
         Perfil reportador = new Perfil();
-        reportador.setId(reporteDTO.getId_reportador());
+        reportador.setId(reporteDTO.getReportado());
         Perfil reportado = new Perfil();
-        reportado.setId(reporteDTO.getId_reportado());
+        reportado.setId(reporteDTO.getReportado());
         reporte.setReportador(reportador);
         reporte.setReportado(reportado);
         reporte.setMotivo(Motivo.valueOf(reporteDTO.getMotivo()));
@@ -70,8 +70,8 @@ public class ReporteService {
     public ReporteDTO convertToDto(Reporte reporte) {
         ReporteDTO dto = new ReporteDTO();
         dto.setId(reporte.getId());
-        dto.setId_reportado(reporte.getReportado().getId());
-        dto.setId_reportador(reporte.getReportador().getId());
+        dto.setReportado(reporte.getReportado().getId());
+        dto.setReportador(reporte.getReportador().getId());
         dto.setMotivo(reporte.getMotivo().toString());
         dto.setFecha(reporte.getFecha());
         return dto;

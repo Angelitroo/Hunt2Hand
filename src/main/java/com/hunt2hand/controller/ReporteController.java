@@ -21,7 +21,7 @@ public class ReporteController {
     }
 
     @GetMapping("/buscar/{nombre}")
-    public ResponseEntity<List<ReporteDTO>> getReportesByNombreReportado(@RequestParam String nombre) {
+    public ResponseEntity<List<ReporteDTO>> getByNombreReportado(@PathVariable String nombre) {
         List<ReporteDTO> reportes = reporteService.getByNombreReportado(nombre);
         return ResponseEntity.ok(reportes);
     }

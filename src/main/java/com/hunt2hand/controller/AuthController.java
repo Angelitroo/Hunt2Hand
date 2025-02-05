@@ -25,7 +25,4 @@ public class AuthController {
     public ResponseEntity<RespuestaDTO> registro(@RequestBody LoginDTO dto){
         return service.login(dto);
     }
-
-    @PutMapping("/actualizar/{id}")
-    public Usuario actualizarUsuario(@PathVariable Long id, @RequestBody RegistroDTO registroDTO) {return service.actualizarUsuario(id, registroDTO);}
 }

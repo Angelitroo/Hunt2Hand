@@ -12,6 +12,7 @@ import com.hunt2hand.repository.PerfilRepository;
 import com.hunt2hand.repository.SeguidoresRepository;
 import com.hunt2hand.repository.UsuarioRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 

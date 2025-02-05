@@ -63,27 +63,6 @@ public class UsuarioService implements UserDetailsService {
         return usuarioGuardado;
     }
 
-    public Usuario actualizarUsuario(Long idUsuario, RegistroDTO dto) {
-        Usuario usuarioExistente = usuarioRepository.findById(idUsuario)
-                .orElseThrow(() -> new IllegalArgumentException("Usuario con id " + idUsuario + " no encontrado"));
-
-        usuarioExistente.setUsername(dto.getUsername());
-        usuarioExistente.setPassword(passwordEncoder.encode(dto.getPassword()));
-        usuarioExistente.setRol(dto.getRol());
-
-        Perfil perfilExistente = perfilService.buscarPorUsuario(usuarioExistente);
-        if (perfilExistente != null) {
-            perfilExistente.setNombre(dto.getNombre());
-            perfilExistente.setApellido(dto.getApellido());
-            perfilExistente.setUbicacion(dto.getUbicacion());
-            perfilExistente.setImagen(dto.getUsername());
-            perfilExistente.setBaneado(dto.isBaneado());
-            perfilService.actualizar(perfilService.convertirAPerfilDTO(perfilExistente), perfilExistente.getId());
-        }
-
-        return usuarioRepository.save(usuarioExistente);
-    }
-
     public ResponseEntity<RespuestaDTO> login(LoginDTO dto) {
         // Buscar usuario por nombre de usuario
         Optional<Usuario> usuarioOpcional = usuarioRepository.findTopByUsername(dto.getUsername());
