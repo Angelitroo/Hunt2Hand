@@ -10,6 +10,7 @@ import com.hunt2hand.repository.PerfilRepository;
 import com.hunt2hand.repository.SeguidoresRepository;
 import com.hunt2hand.repository.UsuarioRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -25,6 +26,7 @@ public class PerfilService {
     private final PerfilRepository perfilRepository;
     private final UsuarioRepository usuarioRepository;
     private final SeguidoresRepository seguidoresRepository;
+    private final PasswordEncoder passwordEncoder;
 
 
     public List<PerfilDTO> getAll() {
@@ -178,14 +180,23 @@ public class PerfilService {
 
 
     public PerfilActualizarDTO actualizar(PerfilActualizarDTO perfilActualizarDTO, Long idPerfil) {
-        Perfil perfil = perfilRepository.findById(idPerfil).orElseThrow(() -> new IllegalArgumentException("El id no existe"));
+        Perfil perfil = perfilRepository.findById(idPerfil)
+                .orElseThrow(() -> new IllegalArgumentException("El id no existe"));
 
         perfil.setNombre(perfilActualizarDTO.getNombre());
         perfil.setApellido(perfilActualizarDTO.getApellido());
         perfil.setUbicacion(perfilActualizarDTO.getUbicacion());
         perfil.setImagen(perfilActualizarDTO.getImagen());
-        perfil.getUsuario().setUsername(perfilActualizarDTO.getUsername());
-        perfil.getUsuario().setPassword(perfilActualizarDTO.getPassword());
+
+        if (perfilActualizarDTO.getUsername() != null && !perfilActualizarDTO.getUsername().isEmpty()) {
+            perfil.getUsuario().setUsername(perfilActualizarDTO.getUsername());
+        }
+
+        if (perfilActualizarDTO.getPassword() != null && !perfilActualizarDTO.getPassword().isEmpty()) {
+            String encodedPassword = passwordEncoder.encode(perfilActualizarDTO.getPassword());
+            perfil.getUsuario().setPassword(encodedPassword);
+            perfilActualizarDTO.setPassword(encodedPassword);
+        }
 
         Perfil perfilActualizado = perfilRepository.save(perfil);
 
@@ -196,10 +207,13 @@ public class PerfilService {
         dto.setUbicacion(perfilActualizado.getUbicacion());
         dto.setImagen(perfilActualizado.getImagen());
         dto.setUsername(perfilActualizado.getUsuario().getUsername());
-        dto.setPassword(perfilActualizado.getUsuario().getPassword());
+        dto.setPassword(perfilActualizarDTO.getPassword());
 
         return dto;
     }
+
+
+
 
     public PerfilActualizarDTO getActualizadoById(Long id) {
         Perfil perfil = perfilRepository.findById(id).orElse(null);
