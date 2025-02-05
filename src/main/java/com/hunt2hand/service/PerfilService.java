@@ -1,5 +1,6 @@
 package com.hunt2hand.service;
 
+import com.hunt2hand.dto.PerfilActualizarDTO;
 import com.hunt2hand.dto.PerfilDTO;
 import com.hunt2hand.dto.SeguirDTO;
 import com.hunt2hand.dto.ProductoDTO;
@@ -11,6 +12,7 @@ import com.hunt2hand.repository.PerfilRepository;
 import com.hunt2hand.repository.SeguidoresRepository;
 import com.hunt2hand.repository.UsuarioRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -26,6 +28,9 @@ public class PerfilService {
     private final PerfilRepository perfilRepository;
     private final UsuarioRepository usuarioRepository;
     private final SeguidoresRepository seguidoresRepository;
+    private final PasswordEncoder passwordEncoder;
+
+
     public List<PerfilDTO> getAll() {
         List<Perfil> perfiles = perfilRepository.findAll();
 
@@ -34,7 +39,16 @@ public class PerfilService {
         }
 
         return perfiles.stream()
-                .map(this::convertirAPerfilDTO)
+                .map(perfil -> {
+                    PerfilDTO dto = new PerfilDTO();
+                    dto.setId(perfil.getId());
+                    dto.setNombre(perfil.getNombre());
+                    dto.setApellido(perfil.getApellido());
+                    dto.setUbicacion(perfil.getUbicacion());
+                    dto.setImagen(perfil.getImagen());
+                    dto.setBaneado(perfil.isBaneado());
+                    return dto;
+                })
                 .collect(Collectors.toList());
     }
 
@@ -45,7 +59,15 @@ public class PerfilService {
             return null;
         }
 
-        return convertirAPerfilDTO(perfil);
+        PerfilDTO dto = new PerfilDTO();
+        dto.setId(perfil.getId());
+        dto.setNombre(perfil.getNombre());
+        dto.setApellido(perfil.getApellido());
+        dto.setUbicacion(perfil.getUbicacion());
+        dto.setImagen(perfil.getImagen());
+        dto.setBaneado(perfil.isBaneado());
+        dto.setUsuario(perfil.getUsuario().getId());
+        return dto;
     }
 
 
@@ -71,7 +93,7 @@ public class PerfilService {
     }
 
     public PerfilDTO guardar(PerfilDTO perfilDTO, Long idUsuario) {
-        Usuario usuario = usuarioRepository.findById(idUsuario).orElseThrow(() -> new RuntimeException("Viaje con id " + idUsuario + " no encontrado"));;
+        Usuario usuario = usuarioRepository.findById(idUsuario).orElseThrow(() -> new RuntimeException("Usuario con id " + idUsuario + " no encontrado"));;
 
         Perfil perfil = new Perfil();
         perfil.setId(perfilDTO.getId());
@@ -84,27 +106,14 @@ public class PerfilService {
 
         Perfil perfilGuardado = perfilRepository.save(perfil);
 
-        return convertirAPerfilDTO(perfilGuardado);
-    }
-
-    public PerfilDTO actualizar(PerfilDTO perfilDTO, Long idPerfil) {
-        Perfil perfil = perfilRepository.findById(idPerfil).orElseThrow(() -> new IllegalArgumentException("El id no existe"));
-
-        perfil.setNombre(perfilDTO.getNombre());
-        perfil.setApellido(perfilDTO.getApellido());
-        perfil.setUbicacion(perfilDTO.getUbicacion());
-        perfil.setImagen(perfilDTO.getImagen());
-        perfil.setBaneado(perfilDTO.getBaneado());
-
-        Perfil perfilActualizado = perfilRepository.save(perfil);
-
         PerfilDTO dto = new PerfilDTO();
-        dto.setId(perfilActualizado.getId());
-        dto.setNombre(perfilActualizado.getNombre());
-        dto.setApellido(perfilActualizado.getApellido());
-        dto.setUbicacion(perfilActualizado.getUbicacion());
-        dto.setImagen(perfilActualizado.getImagen());
-        dto.setBaneado(perfilActualizado.isBaneado());
+        dto.setId(perfilGuardado.getId());
+        dto.setNombre(perfilGuardado.getNombre());
+        dto.setApellido(perfilGuardado.getApellido());
+        dto.setUbicacion(perfilGuardado.getUbicacion());
+        dto.setImagen(perfilGuardado.getImagen());
+        dto.setBaneado(perfilGuardado.isBaneado());
+        dto.setUsuario(perfilGuardado.getUsuario().getId());
 
         return dto;
     }
@@ -170,5 +179,60 @@ public class PerfilService {
         return dto;
     }
 
+
+
+    public PerfilActualizarDTO actualizar(PerfilActualizarDTO perfilActualizarDTO, Long idPerfil) {
+        Perfil perfil = perfilRepository.findById(idPerfil)
+                .orElseThrow(() -> new IllegalArgumentException("El id no existe"));
+
+        perfil.setNombre(perfilActualizarDTO.getNombre());
+        perfil.setApellido(perfilActualizarDTO.getApellido());
+        perfil.setUbicacion(perfilActualizarDTO.getUbicacion());
+        perfil.setImagen(perfilActualizarDTO.getImagen());
+
+        if (perfilActualizarDTO.getUsername() != null && !perfilActualizarDTO.getUsername().isEmpty()) {
+            perfil.getUsuario().setUsername(perfilActualizarDTO.getUsername());
+        }
+
+        if (perfilActualizarDTO.getPassword() != null && !perfilActualizarDTO.getPassword().isEmpty()) {
+            String encodedPassword = passwordEncoder.encode(perfilActualizarDTO.getPassword());
+            perfil.getUsuario().setPassword(encodedPassword);
+            perfilActualizarDTO.setPassword(encodedPassword);
+        }
+
+        Perfil perfilActualizado = perfilRepository.save(perfil);
+
+        PerfilActualizarDTO dto = new PerfilActualizarDTO();
+        dto.setId(perfilActualizado.getId());
+        dto.setNombre(perfilActualizado.getNombre());
+        dto.setApellido(perfilActualizado.getApellido());
+        dto.setUbicacion(perfilActualizado.getUbicacion());
+        dto.setImagen(perfilActualizado.getImagen());
+        dto.setUsername(perfilActualizado.getUsuario().getUsername());
+        dto.setPassword(perfilActualizarDTO.getPassword());
+
+        return dto;
+    }
+
+
+
+
+    public PerfilActualizarDTO getActualizadoById(Long id) {
+        Perfil perfil = perfilRepository.findById(id).orElse(null);
+
+        if (perfil == null) {
+            return null;
+        }
+
+        PerfilActualizarDTO dto = new PerfilActualizarDTO();
+        dto.setId(perfil.getId());
+        dto.setNombre(perfil.getNombre());
+        dto.setApellido(perfil.getApellido());
+        dto.setUbicacion(perfil.getUbicacion());
+        dto.setImagen(perfil.getImagen());
+        dto.setUsername(perfil.getUsuario().getUsername());
+        dto.setPassword(perfil.getUsuario().getPassword());
+        return dto;
+    }
 
 }

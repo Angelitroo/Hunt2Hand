@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Set;
+import java.util.List;
 
 @RestController
 @RequestMapping("/reportes")
@@ -15,14 +15,14 @@ public class ReporteController {
     @Autowired
     private ReporteService reporteService;
 
-    @GetMapping
-    public Set<ReporteDTO> getAllReportes() {
-        return reporteService.getAllReportes();
+    @GetMapping("/")
+    public List<ReporteDTO> getAll() {
+        return reporteService.getAll();
     }
 
-    @GetMapping("/{nombre_reportado}")
-    public ResponseEntity<Set<ReporteDTO>> getReportesByNombreReportado(@PathVariable String nombre_reportado) {
-        Set<ReporteDTO> reportes = reporteService.getReportesByNombreReportado(nombre_reportado);
+    @GetMapping("/buscar/{nombre}")
+    public ResponseEntity<List<ReporteDTO>> getByNombreReportado(@PathVariable String nombre) {
+        List<ReporteDTO> reportes = reporteService.getByNombreReportado(nombre);
         return ResponseEntity.ok(reportes);
     }
 

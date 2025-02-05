@@ -5,6 +5,7 @@ import com.hunt2hand.dto.LoginDTO;
 import com.hunt2hand.dto.RegistroDTO;
 import com.hunt2hand.dto.RespuestaDTO;
 import com.hunt2hand.dto.PerfilDTO;
+import com.hunt2hand.model.Perfil;
 import com.hunt2hand.model.Usuario;
 import com.hunt2hand.repository.UsuarioRepository;
 import com.hunt2hand.security.JWTService;

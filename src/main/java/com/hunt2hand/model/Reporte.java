@@ -4,6 +4,8 @@ import com.hunt2hand.enums.Motivo;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
+
 @Entity
 @Table(name = "reporte", schema = "hunt2hand")
 @Getter
@@ -17,6 +19,9 @@ public class Reporte {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
+
+    @Column(name = "fecha")
+    private LocalDate fecha;
 
     @ManyToOne
     @JoinColumn(name = "id_reportador")

@@ -5,13 +5,10 @@ import com.hunt2hand.enums.Motivo;
 import com.hunt2hand.model.Perfil;
 import com.hunt2hand.model.Reporte;
 import com.hunt2hand.repository.ReporteRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ReporteService {
@@ -22,42 +19,44 @@ public class ReporteService {
         this.reporteRepository = reporteRepository;
     }
 
-    public Set<ReporteDTO> getAllReportes() {
-        Set<ReporteDTO> reporteDTOS = new HashSet<>();
-        for (Reporte reporte : reporteRepository.findAll()) {
-            ReporteDTO reporteDTO = new ReporteDTO();
-            reporteDTO.setId(reporte.getId());
-            reporteDTO.setNombre_reportado(reporte.getReportado().getNombre());
-            reporteDTO.setNombre_reportador(reporte.getReportador().getNombre());
-            reporteDTO.setMotivo(reporte.getMotivo().toString());
-            reporteDTOS.add(reporteDTO);
+    public List<ReporteDTO> getAll() {
+        List<Reporte> reportes = reporteRepository.findAll();
+
+        if (reportes == null) {
+            return Collections.emptyList();
         }
-        return reporteDTOS;
+
+        return reportes.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
     }
 
-    public Set<ReporteDTO> getReportesByNombreReportado(String nombreReportado) {
-        Set<ReporteDTO> reporteDTOS = new HashSet<>();
-        for (Reporte reporte : reporteRepository.findByReportadoNombre(nombreReportado)) {
-            ReporteDTO reporteDTO = new ReporteDTO();
-            reporteDTO.setId(reporte.getId());
-            reporteDTO.setNombre_reportado(reporte.getReportado().getNombre());
-            reporteDTO.setNombre_reportador(reporte.getReportador().getNombre());
-            reporteDTO.setMotivo(reporte.getMotivo().toString());
-            reporteDTOS.add(reporteDTO);
-        }
-        return reporteDTOS;
-    }
+    public List<ReporteDTO> getByNombreReportado(String nombre) {
+        String patron = nombre + "%";
 
+        List<Reporte> reportes = reporteRepository.findByReportado_NombreLikeIgnoreCase(patron);
+
+        if (reportes == null) {
+            return Collections.emptyList();
+        }
+
+        return reportes.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
 
     public ReporteDTO crearReporte(ReporteDTO reporteDTO) {
         Reporte reporte = new Reporte();
-        reporte.setReportador(new Perfil());
-        reporte.getReportador().setNombre(reporteDTO.getNombre_reportador());
-        reporte.setReportado(new Perfil());
-        reporte.getReportado().setNombre(reporteDTO.getNombre_reportado());
+        Perfil reportador = new Perfil();
+        reportador.setId(reporteDTO.getReportado());
+        Perfil reportado = new Perfil();
+        reportado.setId(reporteDTO.getReportado());
+        reporte.setReportador(reportador);
+        reporte.setReportado(reportado);
         reporte.setMotivo(Motivo.valueOf(reporteDTO.getMotivo()));
+        reporte.setFecha(reporteDTO.getFecha());
         reporteRepository.save(reporte);
-        return reporteDTO;
+        return convertToDto(reporte);
     }
 
     public void eliminarMiReporte(Long id) {
@@ -66,5 +65,15 @@ public class ReporteService {
 
     public void eliminarReporte(Long id) {
         reporteRepository.deleteById(id);
+    }
+
+    public ReporteDTO convertToDto(Reporte reporte) {
+        ReporteDTO dto = new ReporteDTO();
+        dto.setId(reporte.getId());
+        dto.setReportado(reporte.getReportado().getId());
+        dto.setReportador(reporte.getReportador().getId());
+        dto.setMotivo(reporte.getMotivo().toString());
+        dto.setFecha(reporte.getFecha());
+        return dto;
     }
 }
