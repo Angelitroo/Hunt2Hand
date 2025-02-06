@@ -3,10 +3,9 @@ package com.hunt2hand.service;
 import com.hunt2hand.dto.PerfilActualizarDTO;
 import com.hunt2hand.dto.PerfilDTO;
 import com.hunt2hand.dto.SeguirDTO;
-import com.hunt2hand.dto.ProductoDTO;
+import com.hunt2hand.exception.RecursoNoEncontrado;
 import com.hunt2hand.model.Perfil;
 import com.hunt2hand.model.Seguidores;
-import com.hunt2hand.model.Producto;
 import com.hunt2hand.model.Usuario;
 import com.hunt2hand.repository.PerfilRepository;
 import com.hunt2hand.repository.SeguidoresRepository;
@@ -16,26 +15,23 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@AllArgsConstructor
 @Validated
+@AllArgsConstructor
 public class PerfilService {
-
     private final PerfilRepository perfilRepository;
     private final UsuarioRepository usuarioRepository;
     private final SeguidoresRepository seguidoresRepository;
     private final PasswordEncoder passwordEncoder;
 
-
     public List<PerfilDTO> getAll() {
         List<Perfil> perfiles = perfilRepository.findAll();
 
-        if (perfiles == null) {
-            return Collections.emptyList();
+        if (perfiles.isEmpty()) {
+            throw new RecursoNoEncontrado("No se encontraron perfiles");
         }
 
         return perfiles.stream()
@@ -53,11 +49,8 @@ public class PerfilService {
     }
 
     public PerfilDTO getById(Long id) {
-        Perfil perfil = perfilRepository.findById(id).orElse(null);
-
-        if (perfil == null) {
-            return null;
-        }
+        Perfil perfil = perfilRepository.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontrado("Perfil con id " + id + " no encontrado"));
 
         PerfilDTO dto = new PerfilDTO();
         dto.setId(perfil.getId());
@@ -70,14 +63,13 @@ public class PerfilService {
         return dto;
     }
 
-
     public List<PerfilDTO> getByNombre(String nombre) {
         String patron = nombre + "%";
 
         List<Perfil> perfiles = perfilRepository.findByNombreLikeIgnoreCase(patron);
 
-        if (perfiles == null) {
-            return Collections.emptyList();
+        if (perfiles == null || perfiles.isEmpty()) {
+            throw new RecursoNoEncontrado("No se encontraron perfiles con el nombre: " + nombre);
         }
 
         return perfiles.stream().map(perfil -> {
@@ -93,7 +85,8 @@ public class PerfilService {
     }
 
     public PerfilDTO guardar(PerfilDTO perfilDTO, Long idUsuario) {
-        Usuario usuario = usuarioRepository.findById(idUsuario).orElseThrow(() -> new RuntimeException("Usuario con id " + idUsuario + " no encontrado"));;
+        Usuario usuario = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new RecursoNoEncontrado("Usuario con id " + idUsuario + " no encontrado"));
 
         Perfil perfil = new Perfil();
         perfil.setId(perfilDTO.getId());
@@ -120,23 +113,21 @@ public class PerfilService {
 
     public String eliminar(Long id) {
         if (!perfilRepository.existsById(id)) {
-            throw new IllegalArgumentException("El id no existe");
+            throw new RecursoNoEncontrado("Perfil con id " + id + " no encontrado");
         }
         perfilRepository.deleteById(id);
         return "Eliminado correctamente";
     }
 
-    public Perfil buscarPorUsuario(Usuario usuario){
+    public Perfil buscarPorUsuario(Usuario usuario) {
         return perfilRepository.findTopByUsuario(usuario);
     }
 
     public Seguidores seguirPerfil(SeguirDTO seguirDTO) {
-        Perfil seguidor = perfilRepository.findById(seguirDTO.getIdSeguidor()).orElse(null);
-        Perfil seguido = perfilRepository.findById(seguirDTO.getIdSeguido()).orElse(null);
-
-        if (seguidor == null || seguido == null) {
-            throw new IllegalArgumentException("Perfil no encontrado");
-        }
+        Perfil seguidor = perfilRepository.findById(seguirDTO.getIdSeguidor())
+                .orElseThrow(() -> new RecursoNoEncontrado("Perfil seguidor no encontrado"));
+        Perfil seguido = perfilRepository.findById(seguirDTO.getIdSeguido())
+                .orElseThrow(() -> new RecursoNoEncontrado("Perfil seguido no encontrado"));
 
         Seguidores seguidores = new Seguidores();
         seguidores.setSeguidor(seguidor);
@@ -147,7 +138,7 @@ public class PerfilService {
 
     public List<PerfilDTO> obtenerSeguidores(Long idPerfil) {
         Perfil perfil = perfilRepository.findById(idPerfil)
-                .orElseThrow(() -> new IllegalArgumentException("Perfil no encontrado"));
+                .orElseThrow(() -> new RecursoNoEncontrado("Perfil con id " + idPerfil + " no encontrado"));
         return seguidoresRepository.findBySeguido(perfil).stream()
                 .map(Seguidores::getSeguidor)
                 .map(this::convertirAPerfilDTO)
@@ -156,7 +147,7 @@ public class PerfilService {
 
     public List<PerfilDTO> obtenerSeguidos(Long idPerfil) {
         Perfil perfil = perfilRepository.findById(idPerfil)
-                .orElseThrow(() -> new IllegalArgumentException("Perfil no encontrado"));
+                .orElseThrow(() -> new RecursoNoEncontrado("Perfil con id " + idPerfil + " no encontrado"));
         return seguidoresRepository.findBySeguidor(perfil).stream()
                 .map(Seguidores::getSeguido)
                 .map(this::convertirAPerfilDTO)
@@ -179,11 +170,9 @@ public class PerfilService {
         return dto;
     }
 
-
-
     public PerfilActualizarDTO actualizar(PerfilActualizarDTO perfilActualizarDTO, Long idPerfil) {
         Perfil perfil = perfilRepository.findById(idPerfil)
-                .orElseThrow(() -> new IllegalArgumentException("El id no existe"));
+                .orElseThrow(() -> new RecursoNoEncontrado("Perfil con id " + idPerfil + " no encontrado"));
 
         perfil.setNombre(perfilActualizarDTO.getNombre());
         perfil.setApellido(perfilActualizarDTO.getApellido());
@@ -214,15 +203,9 @@ public class PerfilService {
         return dto;
     }
 
-
-
-
     public PerfilActualizarDTO getActualizadoById(Long id) {
-        Perfil perfil = perfilRepository.findById(id).orElse(null);
-
-        if (perfil == null) {
-            return null;
-        }
+        Perfil perfil = perfilRepository.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontrado("Perfil con id " + id + " no encontrado"));
 
         PerfilActualizarDTO dto = new PerfilActualizarDTO();
         dto.setId(perfil.getId());
@@ -234,5 +217,4 @@ public class PerfilService {
         dto.setPassword(perfil.getUsuario().getPassword());
         return dto;
     }
-
 }

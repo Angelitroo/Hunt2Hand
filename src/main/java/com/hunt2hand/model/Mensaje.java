@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Entity
@@ -35,9 +36,6 @@ public class Mensaje {
     @Column(name = "contenido", nullable = false)
     private String contenido;
 
-    @Column(name = "fecha", nullable = false)
-    private LocalDate fecha;
-
-    @Column(name = "hora", nullable = false)
-    private LocalTime hora;
+    @Column(name = "fecha")
+    private LocalDateTime fecha;
 }
