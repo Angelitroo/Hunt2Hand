@@ -38,7 +38,6 @@ public class ReporteController {
         return ResponseEntity.noContent().build();
     }
 
-
     @DeleteMapping("eliminar/{id}")
     public ResponseEntity<Void> eliminarReporte(@PathVariable Long id) {
         reporteService.eliminarReporte(id);
