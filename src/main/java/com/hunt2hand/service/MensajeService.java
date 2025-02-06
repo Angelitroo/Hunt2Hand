@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 @Validated
 @RequiredArgsConstructor
 public class MensajeService {
+
     private final MensajeRepository mensajeRepository;
     private final ChatRepository chatRepository;
     private final PerfilRepository perfilRepository;
@@ -35,7 +36,6 @@ public class MensajeService {
 
         Chat chat = chatRepository.findById(mensajeDTO.getIdChat())
                 .orElseThrow(() -> new RecursoNoEncontrado("Chat no encontrado"));
-
 
         Mensaje mensaje = new Mensaje();
         mensaje.setChat(chat);
