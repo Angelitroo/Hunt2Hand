@@ -17,6 +17,7 @@ public class RegistroDTO {
 
     // TABLA USUARIO
     @NotBlank(message = "El nombre de usuario no puede estar vacío.")
+    private String email;
     private String username;
     private String password;
     private Rol rol = Rol.USER;

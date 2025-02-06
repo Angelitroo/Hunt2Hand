@@ -119,10 +119,6 @@ public class PerfilService {
         return "Eliminado correctamente";
     }
 
-    public Perfil buscarPorUsuario(Usuario usuario) {
-        return perfilRepository.findTopByUsuario(usuario);
-    }
-
     public Seguidores seguirPerfil(SeguirDTO seguirDTO) {
         Perfil seguidor = perfilRepository.findById(seguirDTO.getIdSeguidor())
                 .orElseThrow(() -> new RecursoNoEncontrado("Perfil seguidor no encontrado"));
@@ -197,6 +193,7 @@ public class PerfilService {
         dto.setApellido(perfilActualizado.getApellido());
         dto.setUbicacion(perfilActualizado.getUbicacion());
         dto.setImagen(perfilActualizado.getImagen());
+        dto.setEmail(perfilActualizado.getUsuario().getEmail());
         dto.setUsername(perfilActualizado.getUsuario().getUsername());
         dto.setPassword(perfilActualizarDTO.getPassword());
 
