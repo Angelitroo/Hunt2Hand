@@ -22,6 +22,7 @@ public class Favoritos {
     private Perfil perfil;
 
     @ManyToOne
-    @JoinColumn(name = "id_producto", nullable = false)
+    @JoinColumn(name = "id_producto", nullable = false, foreignKey = @ForeignKey(name = "fk_favorito_producto", foreignKeyDefinition = "FOREIGN KEY (id_producto) REFERENCES hunt2hand.producto(id) ON DELETE CASCADE"))
     private Producto producto;
 }
+

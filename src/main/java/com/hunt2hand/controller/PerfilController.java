@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
@@ -60,8 +59,6 @@ public class PerfilController {
         return perfilService.actualizar(perfilActualizarDTO, id);
     }
 
-
-
     @DeleteMapping("/eliminar/{id}")
     public ResponseEntity<String> eliminar(@PathVariable Long id) {
         try {
@@ -77,6 +74,16 @@ public class PerfilController {
         try {
             Seguidores seguidores = perfilService.seguirPerfil(seguirDTO);
             return ResponseEntity.ok(seguidores);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PostMapping("/dejar-seguir")
+    public ResponseEntity<String> dejarDeSeguirPerfil(@RequestBody SeguirDTO seguirDTO) {
+        try {
+            perfilService.dejarDeSeguirPerfil(seguirDTO);
+            return ResponseEntity.ok("Dejado de seguir exitosamente");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
         }
@@ -101,6 +108,13 @@ public class PerfilController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @PostMapping("/es-seguidor")
+    public ResponseEntity<Boolean> esSeguidor(@RequestBody SeguirDTO seguidorDTO) {
+        boolean esSeguidor = perfilService.esSeguidor(seguidorDTO.getIdSeguidor(), seguidorDTO.getIdSeguido());
+        return ResponseEntity.ok(esSeguidor);
+    }
+
     @PostMapping("/favoritos/{idPerfil}/{idProducto}")
     public ResponseEntity<?> guardarFavorito(@PathVariable Long idPerfil, @PathVariable Long idProducto) {
         try {
