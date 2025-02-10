@@ -18,11 +18,11 @@ public class Seguidores {
     @Column(name = "id")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_seguidor")
     private Perfil seguidor;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_seguido")
     private Perfil seguido;
 

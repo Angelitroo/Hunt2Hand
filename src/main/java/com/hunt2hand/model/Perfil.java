@@ -35,7 +35,7 @@ public class  Perfil {
     @Column(name = "baneado")
     private boolean baneado;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_usuario", nullable = false)
     private Usuario usuario;
 }

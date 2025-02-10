@@ -23,11 +23,11 @@ public class Reporte {
     @Column(name = "fecha")
     private LocalDate fecha;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_reportador")
     private Perfil reportador;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_reportado")
     private Perfil reportado;
 

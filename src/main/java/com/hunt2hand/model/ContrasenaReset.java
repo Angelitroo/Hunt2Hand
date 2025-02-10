@@ -23,7 +23,7 @@ public class ContrasenaReset {
     @Column(name = "token", nullable = false, unique = true)
     private String token;
 
-    @OneToOne(targetEntity = Usuario.class, fetch = FetchType.EAGER)
+    @OneToOne(targetEntity = Usuario.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(nullable = false, name = "usuario_id")
     private Usuario usuario;
 

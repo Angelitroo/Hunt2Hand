@@ -102,16 +102,18 @@ public class UsuarioService implements UserDetailsService {
 
             String resetLink = "http://localhost:4200/restablecer-contrasena?token=" + token;
             String emailContent = "<html>" +
-                    "<body>" +
-                    "<h1>Recuperación de Contraseña</h1>" +
+                    "<body style=\"padding: 20px; font-family: Arial, sans-serif;\">" +
+                    "<div style=\"max-width: 600px; margin: auto; background: #e6a1f1; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);\">" +
+                    "<h1 style=\"color: #333;\">Recuperación de Contraseña</h1>" +
                     "<p>Hola " + usuario.getUsername() + ",</p>" +
                     "<p>Hemos recibido una solicitud para restablecer tu contraseña. Haz clic en el botón de abajo para restablecerla:</p>" +
-                    "<a href=\"" + resetLink + "\" style=\"display: inline-block; padding: 10px 20px; font-size: 16px; color: #fff; background-color: #007bff; text-decoration: none; border-radius: 5px;\">Restablecer Contraseña</a>" +
+                    "<a href=\"" + resetLink + "\" style=\"display: inline-block; padding: 15px 30px; font-size: 18px; color: #fff; background-color: #007bff; text-decoration: none; border-radius: 5px;\">Restablecer Contraseña</a>" +
                     "<p>Si no solicitaste un cambio de contraseña, puedes ignorar este correo.</p>" +
-                    "<p>Gracias,</p>" +
+                    "<p>Gracias.</p>" +
                     "<p>El equipo de Hunt2Hand</p>" +
                     "<hr>" +
                     "<p><small>Al hacer clic en el botón, aceptas nuestros <a href=\"http://localhost:4200/terminos\">Términos de Servicio</a> y <a href=\"http://localhost:4200/privacidad\">Política de Privacidad</a>.</small></p>" +
+                    "</div>" +
                     "</body>" +
                     "</html>";
 
