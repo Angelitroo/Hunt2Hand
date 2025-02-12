@@ -45,6 +45,11 @@ public class UsuarioService implements UserDetailsService {
                 new RecursoNoEncontrado("Usuario no encontrado con el nombre: " + username));
     }
 
+    public Usuario obtenerUsuarioPorId(Long id) {
+        return usuarioRepository.findById(id).orElseThrow(() ->
+                new RecursoNoEncontrado("Usuario no encontrado con el id: " + id));
+    }
+
     public Usuario registrarUsuario(RegistroDTO dto) {
         if (usuarioRepository.findTopByUsername(dto.getUsername()).isPresent()) {
             throw new IllegalArgumentException("El nombre de usuario '" + dto.getUsername() + "' ya está en uso.");
