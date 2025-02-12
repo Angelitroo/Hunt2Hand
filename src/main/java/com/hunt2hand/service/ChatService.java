@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,22 +23,31 @@ public class ChatService {
     private final PerfilRepository perfilRepository;
 
     public CrearChatDTO crearChat(CrearChatDTO crearChatDTO) {
-        Perfil usuario1 = perfilRepository.findById(crearChatDTO.getId_creador())
-                .orElseThrow(() -> new RecursoNoEncontrado("Usuario creador no encontrado"));
-        Perfil usuario2 = perfilRepository.findById(crearChatDTO.getId_receptor())
-                .orElseThrow(() -> new RecursoNoEncontrado("Usuario receptor no encontrado"));
+        Long idCreador = crearChatDTO.getId_creador();
+        Long idReceptor = crearChatDTO.getId_receptor();
 
-        Chat chat = new Chat();
-        chat.setCreador(usuario1);
-        chat.setReceptor(usuario2);
-        chat = chatRepository.save(chat);
+        // Buscar si ya existe el chat
+        Optional<Chat> chatExistente = chatRepository.findChatBetweenProfiles(idCreador, idReceptor);
 
-        CrearChatDTO dto = new CrearChatDTO();
-        dto.setId(chat.getId());
-        dto.setId_creador(chat.getCreador().getId());
-        dto.setId_receptor(chat.getReceptor().getId());
-        return dto;
+        if (chatExistente.isPresent()) {
+            Chat chat = chatExistente.get();
+            return new CrearChatDTO(chat.getId(), chat.getCreador().getId(), chat.getReceptor().getId());
+        }
+
+        // Crear un nuevo chat si no existe
+        Perfil creador = perfilRepository.findById(idCreador)
+                .orElseThrow(() -> new RecursoNoEncontrado("Perfil creador no encontrado"));
+        Perfil receptor = perfilRepository.findById(idReceptor)
+                .orElseThrow(() -> new RecursoNoEncontrado("Perfil receptor no encontrado"));
+
+        Chat nuevoChat = new Chat();
+        nuevoChat.setCreador(creador);
+        nuevoChat.setReceptor(receptor);
+        Chat chatCreado = chatRepository.save(nuevoChat);
+
+        return new CrearChatDTO(chatCreado.getId(), chatCreado.getCreador().getId(), chatCreado.getReceptor().getId());
     }
+
 
     public List<ChatDTO> getChatById(Long idUsuario) {
         List<Chat> chats = chatRepository.findChatsByUserId(idUsuario);

@@ -18,7 +18,7 @@ public class ChatController {
     @PostMapping("/crear")
     public ResponseEntity<CrearChatDTO> crearChat(@RequestBody CrearChatDTO crearChatDTO) {
         CrearChatDTO chatCreado = chatService.crearChat(crearChatDTO);
-        return chatCreado != null ? ResponseEntity.ok(chatCreado) : ResponseEntity.badRequest().build();
+        return ResponseEntity.ok(chatCreado);
     }
 
     @GetMapping("/{idUsuario}")
