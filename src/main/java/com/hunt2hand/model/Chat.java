@@ -16,11 +16,11 @@ public class Chat {
     @Column(name = "id")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_creador", nullable = false)
     private Perfil creador;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_receptor", nullable = false)
     private Perfil receptor;
 

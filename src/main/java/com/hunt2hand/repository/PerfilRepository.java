@@ -15,8 +15,6 @@ import java.util.Optional;
 public interface PerfilRepository extends JpaRepository<Perfil, Long> {
     List<Perfil> findByNombreLikeIgnoreCase(String nombre);
 
-    Perfil findTopByUsuario(Usuario usuario);
-
     @Query("SELECT p FROM Perfil p WHERE p.usuario.username = :username")
     Optional<Perfil> findByUsuarioUsername(@Param("username") String username);
 

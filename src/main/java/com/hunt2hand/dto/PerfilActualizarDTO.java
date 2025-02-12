@@ -9,6 +9,7 @@ public class PerfilActualizarDTO {
     private String apellido;
     private String ubicacion;
     private String imagen;
+    private String email;
     private String username;
     private String password;
 }

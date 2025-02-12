@@ -19,7 +19,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @Validated
@@ -30,6 +34,10 @@ public class UsuarioService implements UserDetailsService {
     private final PerfilService perfilService;
     private final PasswordEncoder passwordEncoder;
     private final JWTService jwtService;
+    private final EmailService emailService;
+
+    private final Map<String, String> resetTokens = new ConcurrentHashMap<>();
+    private final Map<String, LocalDateTime> tokenExpiryDates = new ConcurrentHashMap<>();
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -43,6 +51,7 @@ public class UsuarioService implements UserDetailsService {
         }
 
         Usuario nuevoUsuario = new Usuario();
+        nuevoUsuario.setEmail(dto.getEmail());
         nuevoUsuario.setUsername(dto.getUsername());
         nuevoUsuario.setPassword(passwordEncoder.encode(dto.getPassword()));
         nuevoUsuario.setRol(dto.getRol());
@@ -51,7 +60,7 @@ public class UsuarioService implements UserDetailsService {
         perfilDTO.setNombre(dto.getNombre());
         perfilDTO.setApellido(dto.getApellido());
         perfilDTO.setUbicacion(dto.getUbicacion());
-        perfilDTO.setImagen(dto.getUsername());
+        perfilDTO.setImagen(dto.getImagen());
         perfilDTO.setBaneado(dto.isBaneado());
 
         Usuario usuarioGuardado = usuarioRepository.save(nuevoUsuario);
@@ -80,6 +89,58 @@ public class UsuarioService implements UserDetailsService {
             }
         } else {
             throw new RecursoNoEncontrado("Usuario no encontrado");
+        }
+    }
+
+    public void recuperarContrasena(String email) {
+        Optional<Usuario> usuarioOptional = usuarioRepository.findByEmail(email);
+        if (usuarioOptional.isPresent()) {
+            Usuario usuario = usuarioOptional.get();
+            String token = UUID.randomUUID().toString();
+            resetTokens.put(token, usuario.getUsername());
+            tokenExpiryDates.put(token, LocalDateTime.now().plusHours(1));
+
+            String resetLink = "http://localhost:4200/restablecer-contrasena?token=" + token;
+            String emailContent = "<html>" +
+                    "<body style=\"padding: 20px; font-family: Arial, sans-serif;\">" +
+                    "<div style=\"max-width: 600px; margin: auto; background: #e6a1f1; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);\">" +
+                    "<h1 style=\"color: #333;\">Recuperación de Contraseña</h1>" +
+                    "<p>Hola " + usuario.getUsername() + ",</p>" +
+                    "<p>Hemos recibido una solicitud para restablecer tu contraseña. Haz clic en el botón de abajo para restablecerla:</p>" +
+                    "<a href=\"" + resetLink + "\" style=\"display: inline-block; padding: 15px 30px; font-size: 18px; color: #fff; background-color: #007bff; text-decoration: none; border-radius: 5px;\">Restablecer Contraseña</a>" +
+                    "<p>Si no solicitaste un cambio de contraseña, puedes ignorar este correo.</p>" +
+                    "<p>Gracias.</p>" +
+                    "<p>El equipo de Hunt2Hand</p>" +
+                    "<hr>" +
+                    "<p><small>Al hacer clic en el botón, aceptas nuestros <a href=\"http://localhost:4200/terminos\">Términos de Servicio</a> y <a href=\"http://localhost:4200/privacidad\">Política de Privacidad</a>.</small></p>" +
+                    "</div>" +
+                    "</body>" +
+                    "</html>";
+
+            emailService.sendEmail(email, "Recuperación de Contraseña", emailContent);
+        } else {
+            throw new RecursoNoEncontrado("Usuario no encontrado con el correo: " + email);
+        }
+    }
+
+    public void restablecerContrasena(String token, String newPassword) {
+        String username = resetTokens.get(token);
+        LocalDateTime expiryDate = tokenExpiryDates.get(token);
+
+        if (username != null && expiryDate != null && expiryDate.isAfter(LocalDateTime.now())) {
+            Optional<Usuario> usuarioOptional = usuarioRepository.findTopByUsername(username);
+            if (usuarioOptional.isPresent()) {
+                Usuario usuario = usuarioOptional.get();
+                usuario.setPassword(passwordEncoder.encode(newPassword));
+                usuarioRepository.save(usuario);
+
+                resetTokens.remove(token);
+                tokenExpiryDates.remove(token);
+            } else {
+                throw new RecursoNoEncontrado("Usuario no encontrado");
+            }
+        } else {
+            throw new IllegalArgumentException("Token no válido o ha expirado");
         }
     }
 }

@@ -27,6 +27,9 @@ public class Usuario implements UserDetails
     @Column(name = "id")
     private Long id;
 
+    @Column(name = "email", unique = true, nullable = false)
+    private String email;
+
     @Column(name = "username", unique = true, nullable = false)
     private String username;
 
@@ -35,7 +38,10 @@ public class Usuario implements UserDetails
 
     @Column(name = "rol")
     private Rol rol;
-    
+
+    @Transient
+    private String resetToken;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singletonList(new SimpleGrantedAuthority(this.rol.name()));

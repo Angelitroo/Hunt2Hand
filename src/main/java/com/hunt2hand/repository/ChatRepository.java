@@ -18,4 +18,9 @@ public interface ChatRepository extends JpaRepository<Chat, Long> {
 
     @Query("SELECT c FROM Chat c WHERE c.creador.id = :userId OR c.receptor.id = :userId")
     List<Chat> findChatsByUserId(@Param("userId") Long userId);
+
+    @Query("SELECT c FROM Chat c WHERE (c.creador.id = :idCreador AND c.receptor.id = :idReceptor) OR (c.creador.id = :idReceptor AND c.receptor.id = :idCreador)")
+    Optional<Chat> findChatBetweenProfiles(@Param("idCreador") Long idCreador, @Param("idReceptor") Long idReceptor);
+
+
 }

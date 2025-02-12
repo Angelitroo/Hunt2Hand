@@ -119,10 +119,6 @@ public class PerfilService {
         return "Eliminado correctamente";
     }
 
-    public Perfil buscarPorUsuario(Usuario usuario) {
-        return perfilRepository.findTopByUsuario(usuario);
-    }
-
     public Seguidores seguirPerfil(SeguirDTO seguirDTO) {
         Perfil seguidor = perfilRepository.findById(seguirDTO.getIdSeguidor())
                 .orElseThrow(() -> new RecursoNoEncontrado("Perfil seguidor no encontrado"));
@@ -134,6 +130,18 @@ public class PerfilService {
         seguidores.setSeguido(seguido);
 
         return seguidoresRepository.save(seguidores);
+    }
+
+    public void dejarDeSeguirPerfil(SeguirDTO seguirDTO) {
+        Perfil seguidor = perfilRepository.findById(seguirDTO.getIdSeguidor())
+                .orElseThrow(() -> new RecursoNoEncontrado("Perfil seguidor no encontrado"));
+        Perfil seguido = perfilRepository.findById(seguirDTO.getIdSeguido())
+                .orElseThrow(() -> new RecursoNoEncontrado("Perfil seguido no encontrado"));
+
+        Seguidores seguidores = seguidoresRepository.findBySeguidorAndSeguido(seguidor, seguido)
+                .orElseThrow(() -> new RecursoNoEncontrado("Relación de seguimiento no encontrada"));
+
+        seguidoresRepository.delete(seguidores);
     }
 
     public List<PerfilDTO> obtenerSeguidores(Long idPerfil) {
@@ -152,6 +160,15 @@ public class PerfilService {
                 .map(Seguidores::getSeguido)
                 .map(this::convertirAPerfilDTO)
                 .collect(Collectors.toList());
+    }
+
+    public boolean esSeguidor(Long idSeguidor, Long idSeguido) {
+        Perfil seguidor = perfilRepository.findById(idSeguidor)
+                .orElseThrow(() -> new RecursoNoEncontrado("Perfil seguidor no encontrado"));
+        Perfil seguido = perfilRepository.findById(idSeguido)
+                .orElseThrow(() -> new RecursoNoEncontrado("Perfil seguido no encontrado"));
+
+        return seguidoresRepository.existsBySeguidorAndSeguido(seguidor, seguido);
     }
 
     public PerfilDTO convertirAPerfilDTO(Perfil perfil) {
@@ -197,6 +214,7 @@ public class PerfilService {
         dto.setApellido(perfilActualizado.getApellido());
         dto.setUbicacion(perfilActualizado.getUbicacion());
         dto.setImagen(perfilActualizado.getImagen());
+        dto.setEmail(perfilActualizado.getUsuario().getEmail());
         dto.setUsername(perfilActualizado.getUsuario().getUsername());
         dto.setPassword(perfilActualizarDTO.getPassword());
 
