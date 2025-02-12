@@ -60,7 +60,7 @@ public class UsuarioService implements UserDetailsService {
         perfilDTO.setNombre(dto.getNombre());
         perfilDTO.setApellido(dto.getApellido());
         perfilDTO.setUbicacion(dto.getUbicacion());
-        perfilDTO.setImagen(dto.getUsername());
+        perfilDTO.setImagen(dto.getImagen());
         perfilDTO.setBaneado(dto.isBaneado());
 
         Usuario usuarioGuardado = usuarioRepository.save(nuevoUsuario);
