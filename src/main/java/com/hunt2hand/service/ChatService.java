@@ -72,4 +72,9 @@ public class ChatService {
         dto.setImagen_receptor(chat.getReceptor().getImagen());
         return dto;
     }
+
+    public void eliminarChatByPerfil(Long id) {
+        List<Chat> chats = chatRepository.findByCreador_IdOrReceptor_Id(id, id);
+        chatRepository.deleteAll(chats);
+    }
 }

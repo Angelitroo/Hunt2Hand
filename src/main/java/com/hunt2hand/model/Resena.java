@@ -20,11 +20,11 @@ public class Resena {
     @Column(name = "valoracion")
     private Integer valoracion;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "id_perfilvalorado", nullable = false)
     private Perfil perfilValorado;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "id_perfilvalorador", nullable = false)
     private Perfil perfilValorador;
 

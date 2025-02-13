@@ -12,6 +12,7 @@ import java.util.List;
 
 @Repository
 public interface ChatRepository extends JpaRepository<Chat, Long> {
+    List<Chat> findByCreador_IdOrReceptor_Id(Long idCreador, Long idReceptor);
 
     @Query("SELECT c FROM Chat c WHERE (c.creador = :perfil1 AND c.receptor = :perfil2) OR (c.creador = :perfil2 AND c.receptor = :perfil1)")
     Optional<Chat> findChatBetweenUsers(@Param("perfil1") Perfil perfil1, @Param("perfil2") Perfil perfil2);

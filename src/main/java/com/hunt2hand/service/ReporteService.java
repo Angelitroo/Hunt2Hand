@@ -78,4 +78,9 @@ public class ReporteService {
         dto.setFecha(reporte.getFecha());
         return dto;
     }
+
+    public void eliminarReportesByPerfil(Long id) {
+        List<Reporte> reportes = reporteRepository.findByReportado_IdOrReportador_Id(id, id);
+        reporteRepository.deleteAll(reportes);
+    }
 }

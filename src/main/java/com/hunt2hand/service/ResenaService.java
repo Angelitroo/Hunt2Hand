@@ -6,9 +6,12 @@ import com.hunt2hand.model.Perfil;
 import com.hunt2hand.model.Resena;
 import com.hunt2hand.repository.PerfilRepository;
 import com.hunt2hand.repository.ResenaRepository;
+import jdk.dynalink.linker.LinkerServices;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
+
+import java.util.List;
 
 @Service
 @Validated
@@ -34,5 +37,10 @@ public class ResenaService {
         resena.setPerfilValorado(perfilValorado);
 
         return resenaRepository.save(resena);
+    }
+
+    public void eliminarResenaByPerfil(Long id) {
+        List<Resena> resenas = resenaRepository.findByPerfilValorador_IdOrPerfilValorado_Id(id, id);
+        resenaRepository.deleteAll(resenas);
     }
 }

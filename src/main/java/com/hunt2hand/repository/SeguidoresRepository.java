@@ -10,6 +10,7 @@ import java.util.Optional;
 
 @Repository
 public interface SeguidoresRepository extends JpaRepository<Seguidores, Long> {
+    List<Seguidores> findBySeguidor_IdOrSeguido_Id(Long idSeguidor, Long idSeguido);
     List<Seguidores> findBySeguido(Perfil seguido);
     List<Seguidores> findBySeguidor(Perfil seguidor);
     boolean existsBySeguidorAndSeguido(Perfil seguidor, Perfil seguido);

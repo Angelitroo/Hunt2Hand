@@ -4,10 +4,12 @@ import com.hunt2hand.dto.ProductoDTO;
 import com.hunt2hand.exception.RecursoNoEncontrado;
 import com.hunt2hand.model.Perfil;
 import com.hunt2hand.model.Producto;
+import com.hunt2hand.repository.FavoritosRepository;
 import com.hunt2hand.repository.PerfilRepository;
 import com.hunt2hand.repository.ProductoRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
@@ -19,6 +21,7 @@ import java.util.stream.Collectors;
 public class ProductoService {
     private final ProductoRepository productoRepository;
     private final PerfilRepository perfilRepository;
+    private final FavoritosService favoritosService;
 
     public List<ProductoDTO> getAll() {
         List<Producto> productos = productoRepository.findAll();
@@ -101,11 +104,15 @@ public class ProductoService {
         return convertToDto(productoActualizado);
     }
 
+    @Transactional
     public String eliminar(Long id) {
         if (!productoRepository.existsById(id)) {
             throw new RecursoNoEncontrado("Producto con id " + id + " no encontrado");
         }
+
+        favoritosService.eliminarFavoritosByProducto(id);
         productoRepository.deleteById(id);
+
         return "Eliminado correctamente";
     }
 
@@ -133,5 +140,10 @@ public class ProductoService {
         dto.setVendido(producto.getVendido());
         dto.setPerfil(producto.getPerfil().getId());
         return dto;
+    }
+
+    public void eliminarProductoByPerfil(Long id) {
+        List<Producto> productos = productoRepository.findByPerfil_Id(id);
+        productoRepository.deleteAll(productos);
     }
 }

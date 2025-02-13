@@ -7,12 +7,11 @@ import com.hunt2hand.exception.RecursoNoEncontrado;
 import com.hunt2hand.model.Perfil;
 import com.hunt2hand.model.Seguidores;
 import com.hunt2hand.model.Usuario;
-import com.hunt2hand.repository.PerfilRepository;
-import com.hunt2hand.repository.SeguidoresRepository;
-import com.hunt2hand.repository.UsuarioRepository;
+import com.hunt2hand.repository.*;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
@@ -25,7 +24,14 @@ public class PerfilService {
     private final PerfilRepository perfilRepository;
     private final UsuarioRepository usuarioRepository;
     private final SeguidoresRepository seguidoresRepository;
+    private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
+    private final MensajeService mensajeService;
+    private final FavoritosService favoritosService;
+    private final ChatService chatService;
+    private final ReporteService reporteService;
+    private final ResenaService resenaService;
+    private final ProductoService productoService;
 
     public List<PerfilDTO> getAll() {
         List<Perfil> perfiles = perfilRepository.findAll();
@@ -111,13 +117,74 @@ public class PerfilService {
         return dto;
     }
 
+    @Transactional
     public String eliminar(Long id) {
+        Perfil perfil = perfilRepository.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontrado("Perfil con id " + id + " no encontrado"));
+
         if (!perfilRepository.existsById(id)) {
             throw new RecursoNoEncontrado("Perfil con id " + id + " no encontrado");
         }
-        perfilRepository.deleteById(id);
+
+        favoritosService.eliminarFavoritosByPerfil(id);
+        mensajeService.eliminarMensajesByPerfil(id);
+        chatService.eliminarChatByPerfil(id);
+        reporteService.eliminarReportesByPerfil(id);
+        resenaService.eliminarResenaByPerfil(id);
+        eliminarSeguidoresByPerfil(id);
+        productoService.eliminarProductoByPerfil(id);
+        perfilRepository.delete(perfil);
+
         return "Eliminado correctamente";
     }
+
+    @Transactional
+    public String eliminarPorBan(Long id) {
+        if (!perfilRepository.existsById(id)) {
+            throw new RecursoNoEncontrado("Perfil con id " + id + " no encontrado");
+        }
+
+        favoritosService.eliminarFavoritosByPerfil(id);
+        mensajeService.eliminarMensajesByPerfil(id);
+        chatService.eliminarChatByPerfil(id);
+        reporteService.eliminarReportesByPerfil(id);
+        resenaService.eliminarResenaByPerfil(id);
+        eliminarSeguidoresByPerfil(id);
+        productoService.eliminarProductoByPerfil(id);
+
+        return "Eliminado correctamente";
+    }
+
+    public void banear(Long id) {
+        Perfil perfil = perfilRepository.findById(id)
+                .orElseThrow(() -> new RecursoNoEncontrado("Perfil con id " + id + " no encontrado"));
+
+        perfil.setBaneado(true);
+        perfilRepository.save(perfil);
+
+        eliminarPorBan(id);
+        enviarEmailBaneado(perfil.getUsuario().getEmail(), perfil.getUsuario().getUsername());
+    }
+
+    public void enviarEmailBaneado(String email, String username) {
+        String emailContent = "<html>" +
+                "<body style=\"padding: 20px; font-family: Arial, sans-serif;\">" +
+                "<div style=\"max-width: 600px; margin: auto; background: #e6a1f1; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);\">" +
+                "<h1 style=\"color: #333;\">Cuenta Baneada en Hunt2Hand</h1>" +
+                "<p>Hola " + username + ",</p>" +
+                "<p>Lamentamos informarte que tu cuenta ha sido baneada debido a una violación de nuestras políticas.</p>" +
+                "<p>Si crees que esto es un error o tienes alguna pregunta, por favor contacta con nuestro equipo de soporte.</p>" +
+                "<p>Gracias.</p>" +
+                "<p>El equipo de Hunt2Hand</p>" +
+                "<hr>" +
+                "<p><small>Visita nuestra <a href=\"http://localhost:4200/ayuda\">página de ayuda</a> para más información.</small></p>" +
+                "</div>" +
+                "</body>" +
+                "</html>";
+
+        emailService.sendEmail(email, "Cuenta Baneada en Hunt2Hand", emailContent);
+    }
+
 
     public Seguidores seguirPerfil(SeguirDTO seguirDTO) {
         Perfil seguidor = perfilRepository.findById(seguirDTO.getIdSeguidor())
@@ -160,6 +227,11 @@ public class PerfilService {
                 .map(Seguidores::getSeguido)
                 .map(this::convertirAPerfilDTO)
                 .collect(Collectors.toList());
+    }
+
+    public void eliminarSeguidoresByPerfil(Long id) {
+        List<Seguidores> seguidores = seguidoresRepository.findBySeguidor_IdOrSeguido_Id(id, id);
+        seguidoresRepository.deleteAll(seguidores);
     }
 
     public boolean esSeguidor(Long idSeguidor, Long idSeguido) {

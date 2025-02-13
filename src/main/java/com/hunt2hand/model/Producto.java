@@ -40,7 +40,7 @@ public class Producto {
     @Column(name = "vendido")
     private Boolean vendido;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "id_perfil", nullable = false)
     private Perfil perfil;
 }

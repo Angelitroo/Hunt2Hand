@@ -65,4 +65,14 @@ public class FavoritosService {
 
         return favoritosRepository.existsByPerfilAndProducto(perfil, producto);
     }
+
+    public void eliminarFavoritosByPerfil(Long id) {
+        List<Favoritos> favoritos = favoritosRepository.findByPerfil_Id(id);
+        favoritosRepository.deleteAll(favoritos);
+    }
+
+    public void eliminarFavoritosByProducto(Long id) {
+        List<Favoritos> favoritos = favoritosRepository.findByProducto_Id(id);
+        favoritosRepository.deleteAll(favoritos);
+    }
 }

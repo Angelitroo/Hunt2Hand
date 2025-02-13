@@ -10,6 +10,7 @@ import java.util.List;
 
 @Repository
 public interface MensajeRepository extends JpaRepository<Mensaje, Long> {
+    List<Mensaje> findByEmisor_IdOrReceptor_Id(Long idEmisor, Long idReceptor);
 
     @Query("SELECT m FROM Mensaje m WHERE m.chat.id = :chatId ORDER BY m.fecha ASC")
     List<Mensaje> findMessagesByChatId(@Param("chatId") Long chatId);

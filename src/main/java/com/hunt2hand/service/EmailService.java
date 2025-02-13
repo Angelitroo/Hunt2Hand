@@ -31,19 +31,4 @@ public class EmailService {
             throw new RuntimeException("Error al enviar el email", e);
         }
     }
-
-    public void sendEmailWithAttachment(String to, String subject, String body, String attachmentPath, String attachmentName) {
-        MimeMessage mimeMessage = mailSender.createMimeMessage();
-        try {
-            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
-            helper.setTo(to);
-            helper.setSubject(subject);
-            helper.setText(body, true);
-            FileSystemResource file = new FileSystemResource(new File(attachmentPath));
-            helper.addInline(attachmentName, file);
-            mailSender.send(mimeMessage);
-        } catch (MessagingException e) {
-            throw new RuntimeException("Error al enviar el email", e);
-        }
-    }
 }

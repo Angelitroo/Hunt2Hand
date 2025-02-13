@@ -92,4 +92,8 @@ public class MensajeService {
         return dto;
     }
 
+    public void eliminarMensajesByPerfil(Long id) {
+        List<Mensaje> mensajes = mensajeRepository.findByEmisor_IdOrReceptor_Id(id, id);
+        mensajeRepository.deleteAll(mensajes);
+    }
 }

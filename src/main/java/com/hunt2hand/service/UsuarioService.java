@@ -72,6 +72,8 @@ public class UsuarioService implements UserDetailsService {
         perfilDTO.setUsuario(usuarioGuardado.getId());
         perfilService.guardar(perfilDTO, usuarioGuardado.getId());
 
+        enviarEmailBienvenida(nuevoUsuario.getEmail(), nuevoUsuario.getUsername());
+
         return usuarioGuardado;
     }
 
@@ -95,6 +97,25 @@ public class UsuarioService implements UserDetailsService {
         } else {
             throw new RecursoNoEncontrado("Usuario no encontrado");
         }
+    }
+
+    public void enviarEmailBienvenida(String email, String username) {
+        String emailContent = "<html>" +
+                "<body style=\"padding: 20px; font-family: Arial, sans-serif;\">" +
+                "<div style=\"max-width: 600px; margin: auto; background: #e6a1f1; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);\">" +
+                "<h1 style=\"color: #333;\">Bienvenido a Hunt2Hand</h1>" +
+                "<p>Hola " + username + ",</p>" +
+                "<p>Gracias por registrarte en nuestra aplicación. Estamos emocionados de tenerte a bordo.</p>" +
+                "<p>Si tienes alguna pregunta o necesitas ayuda, no dudes en contactarnos.</p>" +
+                "<p>Gracias.</p>" +
+                "<p>El equipo de Hunt2Hand</p>" +
+                "<hr>" +
+                "<p><small>Visita nuestra <a href=\"http://localhost:4200/ayuda\">página de ayuda</a> para más información.</small></p>" +
+                "</div>" +
+                "</body>" +
+                "</html>";
+
+        emailService.sendEmail(email, "Bienvenido a Hunt2Hand", emailContent);
     }
 
     public void recuperarContrasena(String email) {

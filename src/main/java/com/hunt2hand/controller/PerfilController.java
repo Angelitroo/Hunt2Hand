@@ -69,6 +69,16 @@ public class PerfilController {
         }
     }
 
+    @PutMapping("/banear/{id}")
+    public ResponseEntity<String> banear(@PathVariable Long id) {
+        try {
+            perfilService.banear(id);
+            return ResponseEntity.ok("Perfil baneado exitosamente");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
     @PostMapping("/seguir")
     public ResponseEntity<Seguidores> seguirPerfil(@RequestBody SeguirDTO seguirDTO) {
         try {

@@ -3,6 +3,7 @@ package com.hunt2hand.model;
 
 import com.hunt2hand.enums.Rol;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -27,6 +28,7 @@ public class Usuario implements UserDetails
     @Column(name = "id")
     private Long id;
 
+    @Email
     @Column(name = "email", unique = true, nullable = false)
     private String email;
 
