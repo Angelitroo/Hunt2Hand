@@ -13,7 +13,7 @@ import java.time.LocalDate;
 public class ReporteDTO {
     private Long id;
     private LocalDate fecha;
-    private Long reportador;
-    private Long reportado;
+    private Long id_reportador;
+    private Long id_reportado;
     private String motivo;
 }

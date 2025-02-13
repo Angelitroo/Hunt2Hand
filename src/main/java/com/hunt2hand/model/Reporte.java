@@ -1,6 +1,5 @@
 package com.hunt2hand.model;
 
-import com.hunt2hand.enums.Motivo;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,13 +23,13 @@ public class Reporte {
     private LocalDate fecha;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "id_reportador")
+    @JoinColumn(name = "id_reportador" ,nullable = false)
     private Perfil reportador;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "id_reportado")
+    @JoinColumn(name = "id_reportado", nullable = false)
     private Perfil reportado;
 
     @Column(name = "motivo")
-    private Motivo motivo;
+    private String motivo;
 }

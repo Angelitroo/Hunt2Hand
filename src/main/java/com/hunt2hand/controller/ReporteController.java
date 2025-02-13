@@ -1,15 +1,17 @@
 package com.hunt2hand.controller;
 
 import com.hunt2hand.dto.ReporteDTO;
+import com.hunt2hand.model.Reporte;
 import com.hunt2hand.service.ReporteService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/reportes")
+@RequestMapping("/reporte")
 public class ReporteController {
 
     @Autowired
@@ -26,10 +28,10 @@ public class ReporteController {
         return ResponseEntity.ok(reportes);
     }
 
-    @PostMapping("/crear/{}")
-    public ResponseEntity<ReporteDTO> crearReporte(@RequestBody ReporteDTO reporteDTO) {
-        ReporteDTO reporteCreado = reporteService.crearReporte(reporteDTO);
-        return ResponseEntity.ok(reporteCreado);
+    @PostMapping("/crear/{idReportador}/{idReportado}")
+    public ResponseEntity<Reporte> crearReporte(@PathVariable Long idReportador, @PathVariable Long idReportado, @RequestBody ReporteDTO reporteDTO) {
+        Reporte reporteCreado = reporteService.crearReporte(idReportador, idReportado, reporteDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(reporteCreado);
     }
 
     @DeleteMapping("eliminarmio/{id}")
@@ -42,5 +44,11 @@ public class ReporteController {
     public ResponseEntity<Void> eliminarReporte(@PathVariable Long id) {
         reporteService.eliminarReporte(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/buscar/{idReportador}/{idReportado}")
+    public ResponseEntity<ReporteDTO> buscarReporte(@PathVariable Long idReportador, @PathVariable Long idReportado) {
+        ReporteDTO reporte = reporteService.buscarReporte(idReportador, idReportado);
+        return ResponseEntity.ok(reporte);
     }
 }
