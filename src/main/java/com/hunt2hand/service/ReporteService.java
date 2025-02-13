@@ -1,10 +1,10 @@
 package com.hunt2hand.service;
 
 import com.hunt2hand.dto.ReporteDTO;
-import com.hunt2hand.enums.Motivo;
 import com.hunt2hand.exception.RecursoNoEncontrado;
 import com.hunt2hand.model.Perfil;
 import com.hunt2hand.model.Reporte;
+import com.hunt2hand.repository.PerfilRepository;
 import com.hunt2hand.repository.ReporteRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 public class ReporteService {
 
     private final ReporteRepository reporteRepository;
+    private final PerfilRepository perfilRepository;
 
     public List<ReporteDTO> getAll() {
         List<Reporte> reportes = reporteRepository.findAll();
@@ -41,18 +42,20 @@ public class ReporteService {
                 .collect(Collectors.toList());
     }
 
-    public ReporteDTO crearReporte(ReporteDTO reporteDTO) {
+    public Reporte crearReporte(Long idReportador, Long idReportado, ReporteDTO reporteDTO) {
+        Perfil perfilReportador = perfilRepository.findById(idReportador)
+                .orElseThrow(() -> new RecursoNoEncontrado("Perfil reportador no encontrado"));
+
+        Perfil perfilReportado = perfilRepository.findById(idReportado)
+                .orElseThrow(() -> new RecursoNoEncontrado("Perfil reportado no encontrado"));
+
         Reporte reporte = new Reporte();
-        Perfil reportador = new Perfil();
-        reportador.setId(reporteDTO.getReportador());
-        Perfil reportado = new Perfil();
-        reportado.setId(reporteDTO.getReportado());
-        reporte.setReportador(reportador);
-        reporte.setReportado(reportado);
-        reporte.setMotivo(Motivo.valueOf(reporteDTO.getMotivo()));
+        reporte.setReportador(perfilReportador);
+        reporte.setReportado(perfilReportado);
+        reporte.setMotivo(reporteDTO.getMotivo());
         reporte.setFecha(reporteDTO.getFecha());
-        reporteRepository.save(reporte);
-        return convertToDto(reporte);
+
+        return reporteRepository.save(reporte);
     }
 
     public void eliminarMiReporte(Long id) {
@@ -72,11 +75,25 @@ public class ReporteService {
     private ReporteDTO convertToDto(Reporte reporte) {
         ReporteDTO dto = new ReporteDTO();
         dto.setId(reporte.getId());
-        dto.setReportado(reporte.getReportado().getId());
-        dto.setReportador(reporte.getReportador().getId());
-        dto.setMotivo(reporte.getMotivo().toString());
+        dto.setId_reportado(reporte.getReportado().getId());
+        dto.setId_reportador(reporte.getReportador().getId());
+        dto.setMotivo(reporte.getMotivo());
         dto.setFecha(reporte.getFecha());
         return dto;
+    }
+
+    public ReporteDTO buscarReporte(Long idReportador, Long idReportado) {
+        perfilRepository.findById(idReportador)
+                .orElseThrow(() -> new RecursoNoEncontrado("Perfil reportador no encontrado"));
+        perfilRepository.findById(idReportado)
+                .orElseThrow(() -> new RecursoNoEncontrado("Perfil reportado no encontrado"));
+
+        Reporte reporte = reporteRepository.findPerfiles(idReportador, idReportado)
+                .orElseThrow(() -> new RecursoNoEncontrado("Reporte no encontrado"));
+
+
+
+        return convertToDto(reporte);
     }
 
     public void eliminarReportesByPerfil(Long id) {

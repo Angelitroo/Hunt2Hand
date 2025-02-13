@@ -32,5 +32,5 @@ public class Reporte {
     private Perfil reportado;
 
     @Column(name = "motivo")
-    private Motivo motivo;
+    private String motivo;
 }
