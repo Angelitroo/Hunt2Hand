@@ -8,8 +8,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/reseña")
+@RequestMapping("/resena")
 public class ResenaController {
 
     @Autowired
@@ -17,11 +19,22 @@ public class ResenaController {
 
 
     @PostMapping("/crear/{idPerfilValorador}/{idPerfilValorado}")
-    public ResponseEntity<Resena> crearReseña(@PathVariable Long idPerfilValorador,
-                                              @PathVariable Long idPerfilValorado,
-                                              @RequestBody ResenaDTO resenaDTO) {
+    public ResponseEntity<Resena> crearResena(@PathVariable Long idPerfilValorador, @PathVariable Long idPerfilValorado, @RequestBody  ResenaDTO resenaDTO) {
         Resena nuevaResena = resenaService.crearResena(idPerfilValorador, idPerfilValorado, resenaDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevaResena);
     }
 
+
+    @GetMapping("/buscar/media/{idPerfilValorado}")
+    public ResponseEntity<Double> buscarResenaMedia(@PathVariable Long idPerfilValorado) {
+        Double mediaValoracion = resenaService.buscarResenaMedia(idPerfilValorado);
+        return ResponseEntity.ok(mediaValoracion);
+    }
+
+
+    @GetMapping("/buscar/{idPerfilValorador}/{idPerfilValorado}")
+    public ResponseEntity<ResenaDTO> buscarResena(@PathVariable Long idPerfilValorador, @PathVariable Long idPerfilValorado) {
+        ResenaDTO resena = resenaService.buscarResena(idPerfilValorador, idPerfilValorado);
+        return ResponseEntity.ok(resena);
+    }
 }
