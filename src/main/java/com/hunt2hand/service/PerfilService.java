@@ -122,6 +122,8 @@ public class PerfilService {
         Perfil perfil = perfilRepository.findById(id)
                 .orElseThrow(() -> new RecursoNoEncontrado("Perfil con id " + id + " no encontrado"));
 
+        Usuario usuario = perfil.getUsuario();
+
         if (!perfilRepository.existsById(id)) {
             throw new RecursoNoEncontrado("Perfil con id " + id + " no encontrado");
         }
@@ -134,6 +136,7 @@ public class PerfilService {
         eliminarSeguidoresByPerfil(id);
         productoService.eliminarProductoByPerfil(id);
         perfilRepository.delete(perfil);
+        usuarioRepository.delete(usuario);
 
         return "Eliminado correctamente";
     }
