@@ -15,7 +15,7 @@ import java.util.Optional;
 @Repository
 public interface ResenaRepository extends JpaRepository<Resena, Long> {
     List<Resena> findByPerfilValorador_IdOrPerfilValorado_Id(Long idValorador, Long idValorado);
-}
+
     @Query("SELECT AVG(r.valoracion) FROM Resena r WHERE r.perfilValorado.id = :idPerfilValorado")
     Double findMediaValoracion(Long idPerfilValorado);
 
