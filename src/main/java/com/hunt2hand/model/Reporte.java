@@ -1,6 +1,5 @@
 package com.hunt2hand.model;
 
-import com.hunt2hand.enums.Motivo;
 import jakarta.persistence.*;
 import lombok.*;
 
