@@ -5,7 +5,9 @@ import com.hunt2hand.dto.RegistroDTO;
 import com.hunt2hand.dto.RespuestaDTO;
 import com.hunt2hand.dto.PerfilDTO;
 import com.hunt2hand.exception.RecursoNoEncontrado;
+import com.hunt2hand.model.Perfil;
 import com.hunt2hand.model.Usuario;
+import com.hunt2hand.repository.PerfilRepository;
 import com.hunt2hand.repository.UsuarioRepository;
 import com.hunt2hand.security.JWTService;
 import lombok.AllArgsConstructor;
@@ -38,6 +40,7 @@ public class UsuarioService implements UserDetailsService {
 
     private final Map<String, String> resetTokens = new ConcurrentHashMap<>();
     private final Map<String, LocalDateTime> tokenExpiryDates = new ConcurrentHashMap<>();
+    private final PerfilRepository perfilRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -67,6 +70,7 @@ public class UsuarioService implements UserDetailsService {
         perfilDTO.setUbicacion(dto.getUbicacion());
         perfilDTO.setImagen(dto.getImagen());
         perfilDTO.setBaneado(dto.isBaneado());
+        perfilDTO.setActivado(dto.isActivado());
 
         Usuario usuarioGuardado = usuarioRepository.save(nuevoUsuario);
         perfilDTO.setUsuario(usuarioGuardado.getId());
@@ -77,14 +81,40 @@ public class UsuarioService implements UserDetailsService {
         return usuarioGuardado;
     }
 
+    public void activarCuenta(String token) {
+        String username = resetTokens.get(token);
+        LocalDateTime expiryDate = tokenExpiryDates.get(token);
+
+        if (username != null && expiryDate != null && expiryDate.isAfter(LocalDateTime.now())) {
+            Optional<Usuario> usuarioOptional = usuarioRepository.findTopByUsername(username);
+            if (usuarioOptional.isPresent()) {
+                Usuario usuario = usuarioOptional.get();
+                Perfil perfil = perfilRepository.findByUsuarioId(usuario.getId());
+                perfil.setActivado(true);
+                perfilRepository.save(perfil);
+
+                resetTokens.remove(token);
+                tokenExpiryDates.remove(token);
+            } else {
+                throw new RecursoNoEncontrado("Usuario no encontrado");
+            }
+        } else {
+            throw new IllegalArgumentException("Token no válido o ha expirado");
+        }
+    }
+
     public ResponseEntity<RespuestaDTO> login(LoginDTO dto) {
         Optional<Usuario> usuarioOpcional = usuarioRepository.findTopByUsername(dto.getUsername());
 
         if (usuarioOpcional.isPresent()) {
             Usuario usuario = usuarioOpcional.get();
+            Perfil perfil = perfilRepository.findByUsuarioId(usuario.getId());
+
+            if (!perfil.isActivado()) {
+                throw new IllegalArgumentException("La cuenta no está activada. Por favor, revisa tu correo electrónico para activar tu cuenta.");
+            }
 
             if (passwordEncoder.matches(dto.getPassword(), usuario.getPassword())) {
-
                 String token = jwtService.generateToken(usuario);
                 return ResponseEntity
                         .ok(RespuestaDTO
@@ -100,12 +130,18 @@ public class UsuarioService implements UserDetailsService {
     }
 
     public void enviarEmailBienvenida(String email, String username) {
+        String token = UUID.randomUUID().toString();
+        resetTokens.put(token, username);
+        tokenExpiryDates.put(token, LocalDateTime.now().plusHours(24));
+
+        String activationLink = "http://localhost:4200/activar-cuenta?token=" + token;
         String emailContent = "<html>" +
                 "<body style=\"padding: 20px; font-family: Arial, sans-serif;\">" +
                 "<div style=\"max-width: 600px; margin: auto; background: #e6a1f1; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);\">" +
                 "<h1 style=\"color: #333;\">Bienvenido a Hunt2Hand</h1>" +
                 "<p>Hola " + username + ",</p>" +
-                "<p>Gracias por registrarte en nuestra aplicación. Estamos emocionados de tenerte a bordo.</p>" +
+                "<p>Gracias por registrarte en nuestra aplicación. Por favor, haz clic en el enlace de abajo para activar tu cuenta:</p>" +
+                "<a href=\"" + activationLink + "\" style=\"display: inline-block; padding: 15px 30px; font-size: 18px; color: #fff; background-color: #007bff; text-decoration: none; border-radius: 5px;\">Activar Cuenta</a>" +
                 "<p>Si tienes alguna pregunta o necesitas ayuda, no dudes en contactarnos.</p>" +
                 "<p>Gracias.</p>" +
                 "<p>El equipo de Hunt2Hand</p>" +

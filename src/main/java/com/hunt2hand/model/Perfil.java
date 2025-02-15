@@ -32,6 +32,9 @@ public class  Perfil {
     @Column(name = "imagen")
     private String imagen;
 
+    @Column(name = "activado")
+    private boolean activado;
+
     @Column(name = "baneado")
     private boolean baneado;
 

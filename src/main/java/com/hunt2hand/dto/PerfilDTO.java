@@ -9,6 +9,7 @@ public class PerfilDTO {
     private String apellido;
     private String ubicacion;
     private String imagen;
+    private Boolean activado;
     private Boolean baneado;
     private Long Usuario;
 }

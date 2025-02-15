@@ -28,6 +28,14 @@ public class AuthController {
         return service.login(dto);
     }
 
+    @PostMapping("/activar-cuenta")
+    public ResponseEntity<?> activarCuenta(@RequestParam Map<String, String> request) {
+        String token = request.get("token");
+
+        service.activarCuenta(token);
+        return ResponseEntity.ok().build();
+    }
+
     @PostMapping("/recuperar-contrasena")
     public ResponseEntity<?> recuperarContrasena(@RequestBody Map<String, String> request) {
         String email = request.get("email");

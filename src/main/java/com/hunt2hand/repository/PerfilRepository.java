@@ -13,6 +13,8 @@ import java.util.Optional;
 
 @Repository
 public interface PerfilRepository extends JpaRepository<Perfil, Long> {
+    Perfil findByUsuarioId(Long usuarioId);
+
     List<Perfil> findByNombreLikeIgnoreCase(String nombre);
 
     @Query("SELECT p FROM Perfil p WHERE p.usuario.username = :username")
