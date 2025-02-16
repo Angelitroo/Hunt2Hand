@@ -1,9 +1,6 @@
 package com.hunt2hand.service;
 
-import com.hunt2hand.dto.LoginDTO;
-import com.hunt2hand.dto.RegistroDTO;
-import com.hunt2hand.dto.RespuestaDTO;
-import com.hunt2hand.dto.PerfilDTO;
+import com.hunt2hand.dto.*;
 import com.hunt2hand.exception.RecursoNoEncontrado;
 import com.hunt2hand.model.Perfil;
 import com.hunt2hand.model.Usuario;
@@ -82,27 +79,27 @@ public class UsuarioService implements UserDetailsService {
     }
 
 
-    public void activarCuenta(String token) {
-        String username = resetTokens.get(token);
-        LocalDateTime expiryDate = tokenExpiryDates.get(token);
+    public PerfilDTO activarCuenta(ActivarPerfilDTO activarPerfilDTO) {
+        Perfil perfil = perfilRepository.findById(activarPerfilDTO.getIdPerfil())
+                .orElseThrow(() -> new RecursoNoEncontrado("Perfil con id " + activarPerfilDTO.getIdPerfil() + " no encontrado"));
 
-        if (username != null && expiryDate != null && expiryDate.isAfter(LocalDateTime.now())) {
-            Optional<Usuario> usuarioOptional = usuarioRepository.findTopByUsername(username);
-            if (usuarioOptional.isPresent()) {
-                Usuario usuario = usuarioOptional.get();
-                Perfil perfil = perfilRepository.findByUsuarioId(usuario.getId());
-                perfil.setActivado(true);
-                perfilRepository.save(perfil);
+        perfil.setActivado(true);
+        perfilRepository.save(perfil);
 
-                resetTokens.remove(token);
-                tokenExpiryDates.remove(token);
-            } else {
-                throw new RecursoNoEncontrado("Usuario no encontrado");
-            }
-        } else {
-            throw new IllegalArgumentException("Token no válido o ha expirado");
-        }
+        enviarEmailBienvenida(perfil.getUsuario().getEmail(), perfil.getUsuario().getUsername());
+
+        PerfilDTO dto = new PerfilDTO();
+        dto.setId(perfil.getId());
+        dto.setNombre(perfil.getNombre());
+        dto.setApellido(perfil.getApellido());
+        dto.setUbicacion(perfil.getUbicacion());
+        dto.setImagen(perfil.getImagen());
+        dto.setActivado(perfil.isActivado());
+        dto.setUsuario(perfil.getUsuario().getId());
+
+        return dto;
     }
+
 
     public ResponseEntity<RespuestaDTO> login(LoginDTO dto) {
         Optional<Usuario> usuarioOpcional = usuarioRepository.findTopByUsername(dto.getUsername());

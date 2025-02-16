@@ -1,11 +1,10 @@
 package com.hunt2hand.controller;
 
-import com.hunt2hand.dto.LoginDTO;
-import com.hunt2hand.dto.RegistroDTO;
-import com.hunt2hand.dto.RespuestaDTO;
+import com.hunt2hand.dto.*;
 import com.hunt2hand.model.Usuario;
 import com.hunt2hand.service.UsuarioService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,30 +15,32 @@ import java.util.Map;
 @AllArgsConstructor
 public class AuthController {
 
-    private UsuarioService service;
+    private UsuarioService usuarioService;
 
     @PostMapping("/registro")
     public Usuario registro(@RequestBody RegistroDTO registroDTO){
-        return service.registrarUsuario(registroDTO);
+        return usuarioService.registrarUsuario(registroDTO);
     }
 
     @PostMapping("/login")
     public ResponseEntity<RespuestaDTO> registro(@RequestBody LoginDTO dto){
-        return service.login(dto);
+        return usuarioService.login(dto);
     }
 
-    @PostMapping("/activar-cuenta")
-    public ResponseEntity<?> activarCuenta(@RequestParam Map<String, String> request) {
-        String token = request.get("token");
-
-        service.activarCuenta(token);
-        return ResponseEntity.ok().build();
+    @PutMapping("/activar")
+    public ResponseEntity<PerfilDTO> activarCuenta(@RequestBody ActivarPerfilDTO activarPerfilDTO) {
+        try {
+            PerfilDTO perfilDTO = usuarioService.activarCuenta(activarPerfilDTO);
+            return ResponseEntity.ok(perfilDTO);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
     }
 
     @PostMapping("/recuperar-contrasena")
     public ResponseEntity<?> recuperarContrasena(@RequestBody Map<String, String> request) {
         String email = request.get("email");
-        service.recuperarContrasena(email);
+        usuarioService.recuperarContrasena(email);
         return ResponseEntity.ok().build();
     }
 
@@ -47,7 +48,7 @@ public class AuthController {
     public ResponseEntity<?> restablecerContrasena(@RequestBody Map<String, String> request) {
         String token = request.get("token");
         String newPassword = request.get("newPassword");
-        service.restablecerContrasena(token, newPassword);
+        usuarioService.restablecerContrasena(token, newPassword);
         return ResponseEntity.ok().build();
     }
 }
