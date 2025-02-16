@@ -128,28 +128,32 @@ public class UsuarioService implements UserDetailsService {
     }
 
     public void enviarEmailBienvenida(String email, String username) {
-        String token = UUID.randomUUID().toString();
-        resetTokens.put(token, username);
-        tokenExpiryDates.put(token, LocalDateTime.now().plusHours(24));
+        Optional<Usuario> usuarioOptional = usuarioRepository.findTopByUsername(username);
+        if (usuarioOptional.isPresent()) {
+            Usuario usuario = usuarioOptional.get();
+            String token = jwtService.generateToken(usuario);
 
-        String activationLink = "http://localhost:4200/activar-cuenta?token=" + token;
-        String emailContent = "<html>" +
-                "<body style=\"padding: 20px; font-family: Arial, sans-serif;\">" +
-                "<div style=\"max-width: 600px; margin: auto; background: #e6a1f1; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);\">" +
-                "<h1 style=\"color: #333;\">Bienvenido a Hunt2Hand</h1>" +
-                "<p>Hola " + username + ",</p>" +
-                "<p>Gracias por registrarte en nuestra aplicación. Por favor, haz clic en el enlace de abajo para activar tu cuenta:</p>" +
-                "<a href=\"" + activationLink + "\" style=\"display: inline-block; padding: 15px 30px; font-size: 18px; color: #fff; background-color: #007bff; text-decoration: none; border-radius: 5px;\">Activar Cuenta</a>" +
-                "<p>Si tienes alguna pregunta o necesitas ayuda, no dudes en contactarnos.</p>" +
-                "<p>Gracias.</p>" +
-                "<p>El equipo de Hunt2Hand</p>" +
-                "<hr>" +
-                "<p><small>Visita nuestra <a href=\"http://localhost:4200/ayuda\">página de ayuda</a> para más información.</small></p>" +
-                "</div>" +
-                "</body>" +
-                "</html>";
+            String activationLink = "http://localhost:4200/activar-cuenta?token=" + token;
+            String emailContent = "<html>" +
+                    "<body style=\"padding: 20px; font-family: Arial, sans-serif;\">" +
+                    "<div style=\"max-width: 600px; margin: auto; background: #e6a1f1; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);\">" +
+                    "<h1 style=\"color: #333;\">Bienvenido a Hunt2Hand</h1>" +
+                    "<p>Hola " + username + ",</p>" +
+                    "<p>Gracias por registrarte en nuestra aplicación. Por favor, haz clic en el enlace de abajo para activar tu cuenta:</p>" +
+                    "<a href=\"" + activationLink + "\" style=\"display: inline-block; padding: 15px 30px; font-size: 18px; color: #fff; background-color: #007bff; text-decoration: none; border-radius: 5px;\">Activar Cuenta</a>" +
+                    "<p>Si tienes alguna pregunta o necesitas ayuda, no dudes en contactarnos.</p>" +
+                    "<p>Gracias.</p>" +
+                    "<p>El equipo de Hunt2Hand</p>" +
+                    "<hr>" +
+                    "<p><small>Visita nuestra <a href=\"http://localhost:4200/ayuda\">página de ayuda</a> para más información.</small></p>" +
+                    "</div>" +
+                    "</body>" +
+                    "</html>";
 
-        emailService.sendEmail(email, "Bienvenido a Hunt2Hand", emailContent);
+            emailService.sendEmail(email, "Bienvenido a Hunt2Hand", emailContent);
+        } else {
+            throw new RecursoNoEncontrado("Usuario no encontrado con el nombre: " + username);
+        }
     }
 
     public void recuperarContrasena(String email) {
