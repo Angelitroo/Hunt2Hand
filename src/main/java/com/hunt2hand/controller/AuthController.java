@@ -28,9 +28,10 @@ public class AuthController {
     }
 
     @PutMapping("/activar")
-    public ResponseEntity<PerfilDTO> activarCuenta(@RequestBody ActivarPerfilDTO activarPerfilDTO) {
+    public ResponseEntity<PerfilDTO> activarCuenta(@RequestBody Map<String, String> request) {
+        String token = request.get("token");
         try {
-            PerfilDTO perfilDTO = usuarioService.activarCuenta(activarPerfilDTO);
+            PerfilDTO perfilDTO = usuarioService.activarCuenta(token);
             return ResponseEntity.ok(perfilDTO);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
