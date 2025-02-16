@@ -79,25 +79,34 @@ public class UsuarioService implements UserDetailsService {
     }
 
 
-    public PerfilDTO activarCuenta(ActivarPerfilDTO activarPerfilDTO) {
-        Perfil perfil = perfilRepository.findById(activarPerfilDTO.getIdPerfil())
-                .orElseThrow(() -> new RecursoNoEncontrado("Perfil con id " + activarPerfilDTO.getIdPerfil() + " no encontrado"));
+    public PerfilDTO activarCuenta(String token) {
+        String username = resetTokens.get(token);
+        LocalDateTime expiryDate = tokenExpiryDates.get(token);
 
-        perfil.setActivado(true);
-        perfilRepository.save(perfil);
+        if (username != null && expiryDate != null && expiryDate.isAfter(LocalDateTime.now())) {
+            Usuario usuario = usuarioRepository.findTopByUsername(username)
+                    .orElseThrow(() -> new RecursoNoEncontrado("Usuario no encontrado con el nombre: " + username));
+            Perfil perfil = perfilRepository.findByUsuarioId(usuario.getId());
 
-        enviarEmailBienvenida(perfil.getUsuario().getEmail(), perfil.getUsuario().getUsername());
+            perfil.setActivado(true);
+            perfilRepository.save(perfil);
 
-        PerfilDTO dto = new PerfilDTO();
-        dto.setId(perfil.getId());
-        dto.setNombre(perfil.getNombre());
-        dto.setApellido(perfil.getApellido());
-        dto.setUbicacion(perfil.getUbicacion());
-        dto.setImagen(perfil.getImagen());
-        dto.setActivado(perfil.isActivado());
-        dto.setUsuario(perfil.getUsuario().getId());
+            resetTokens.remove(token);
+            tokenExpiryDates.remove(token);
 
-        return dto;
+            PerfilDTO dto = new PerfilDTO();
+            dto.setId(perfil.getId());
+            dto.setNombre(perfil.getNombre());
+            dto.setApellido(perfil.getApellido());
+            dto.setUbicacion(perfil.getUbicacion());
+            dto.setImagen(perfil.getImagen());
+            dto.setActivado(perfil.isActivado());
+            dto.setUsuario(perfil.getUsuario().getId());
+
+            return dto;
+        } else {
+            throw new IllegalArgumentException("Token no válido o ha expirado");
+        }
     }
 
 
