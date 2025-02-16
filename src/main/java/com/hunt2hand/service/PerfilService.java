@@ -1,5 +1,6 @@
 package com.hunt2hand.service;
 
+import com.hunt2hand.dto.BanearPerfilDTO;
 import com.hunt2hand.dto.PerfilActualizarDTO;
 import com.hunt2hand.dto.PerfilDTO;
 import com.hunt2hand.dto.SeguirDTO;
@@ -158,24 +159,70 @@ public class PerfilService {
         return "Eliminado correctamente";
     }
 
-    public void banear(Long id) {
-        Perfil perfil = perfilRepository.findById(id)
-                .orElseThrow(() -> new RecursoNoEncontrado("Perfil con id " + id + " no encontrado"));
+    public PerfilDTO banear(BanearPerfilDTO banearPerfilDTO) {
+        Perfil perfil = perfilRepository.findById(banearPerfilDTO.getIdPerfil())
+                .orElseThrow(() -> new RecursoNoEncontrado("Perfil con id " + banearPerfilDTO.getIdPerfil() + " no encontrado"));
 
         perfil.setBaneado(true);
         perfilRepository.save(perfil);
 
-        eliminarPorBan(id);
-        enviarEmailBaneado(perfil.getUsuario().getEmail(), perfil.getUsuario().getUsername());
+        eliminarPorBan(banearPerfilDTO.getIdPerfil());
+        enviarEmailBaneado(perfil.getUsuario().getEmail(), perfil.getUsuario().getUsername(), banearPerfilDTO.getMotivo());
+
+        PerfilDTO dto = new PerfilDTO();
+        dto.setId(perfil.getId());
+        dto.setNombre(perfil.getNombre());
+        dto.setApellido(perfil.getApellido());
+        dto.setUbicacion(perfil.getUbicacion());
+        dto.setImagen(perfil.getImagen());
+        dto.setBaneado(perfil.isBaneado());
+        dto.setUsuario(perfil.getUsuario().getId());
+
+        return dto;
     }
 
-    public void enviarEmailBaneado(String email, String username) {
+    public PerfilActualizarDTO actualizar(PerfilActualizarDTO perfilActualizarDTO, Long idPerfil) {
+        Perfil perfil = perfilRepository.findById(idPerfil)
+                .orElseThrow(() -> new RecursoNoEncontrado("Perfil con id " + idPerfil + " no encontrado"));
+
+        perfil.setNombre(perfilActualizarDTO.getNombre());
+        perfil.setApellido(perfilActualizarDTO.getApellido());
+        perfil.setUbicacion(perfilActualizarDTO.getUbicacion());
+        perfil.setImagen(perfilActualizarDTO.getImagen());
+
+        if (perfilActualizarDTO.getUsername() != null && !perfilActualizarDTO.getUsername().isEmpty()) {
+            perfil.getUsuario().setUsername(perfilActualizarDTO.getUsername());
+        }
+
+        if (perfilActualizarDTO.getPassword() != null && !perfilActualizarDTO.getPassword().isEmpty()) {
+            String encodedPassword = passwordEncoder.encode(perfilActualizarDTO.getPassword());
+            perfil.getUsuario().setPassword(encodedPassword);
+            perfilActualizarDTO.setPassword(encodedPassword);
+        }
+
+        Perfil perfilActualizado = perfilRepository.save(perfil);
+
+        PerfilActualizarDTO dto = new PerfilActualizarDTO();
+        dto.setId(perfilActualizado.getId());
+        dto.setNombre(perfilActualizado.getNombre());
+        dto.setApellido(perfilActualizado.getApellido());
+        dto.setUbicacion(perfilActualizado.getUbicacion());
+        dto.setImagen(perfilActualizado.getImagen());
+        dto.setEmail(perfilActualizado.getUsuario().getEmail());
+        dto.setUsername(perfilActualizado.getUsuario().getUsername());
+        dto.setPassword(perfilActualizarDTO.getPassword());
+
+        return dto;
+    }
+
+    public void enviarEmailBaneado(String email, String username, String motivo) {
         String emailContent = "<html>" +
                 "<body style=\"padding: 20px; font-family: Arial, sans-serif;\">" +
                 "<div style=\"max-width: 600px; margin: auto; background: #e6a1f1; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);\">" +
                 "<h1 style=\"color: #333;\">Cuenta Baneada en Hunt2Hand</h1>" +
                 "<p>Hola " + username + ",</p>" +
-                "<p>Lamentamos informarte que tu cuenta ha sido baneada debido a una violación de nuestras políticas.</p>" +
+                "<p>Lamentamos informarte que tu cuenta ha sido baneada debido a la siguiente razón:</p>" +
+                "<p>" + motivo + "</p>" +
                 "<p>Si crees que esto es un error o tienes alguna pregunta, por favor contacta con nuestro equipo de soporte.</p>" +
                 "<p>Gracias.</p>" +
                 "<p>El equipo de Hunt2Hand</p>" +
@@ -262,39 +309,7 @@ public class PerfilService {
         return dto;
     }
 
-    public PerfilActualizarDTO actualizar(PerfilActualizarDTO perfilActualizarDTO, Long idPerfil) {
-        Perfil perfil = perfilRepository.findById(idPerfil)
-                .orElseThrow(() -> new RecursoNoEncontrado("Perfil con id " + idPerfil + " no encontrado"));
 
-        perfil.setNombre(perfilActualizarDTO.getNombre());
-        perfil.setApellido(perfilActualizarDTO.getApellido());
-        perfil.setUbicacion(perfilActualizarDTO.getUbicacion());
-        perfil.setImagen(perfilActualizarDTO.getImagen());
-
-        if (perfilActualizarDTO.getUsername() != null && !perfilActualizarDTO.getUsername().isEmpty()) {
-            perfil.getUsuario().setUsername(perfilActualizarDTO.getUsername());
-        }
-
-        if (perfilActualizarDTO.getPassword() != null && !perfilActualizarDTO.getPassword().isEmpty()) {
-            String encodedPassword = passwordEncoder.encode(perfilActualizarDTO.getPassword());
-            perfil.getUsuario().setPassword(encodedPassword);
-            perfilActualizarDTO.setPassword(encodedPassword);
-        }
-
-        Perfil perfilActualizado = perfilRepository.save(perfil);
-
-        PerfilActualizarDTO dto = new PerfilActualizarDTO();
-        dto.setId(perfilActualizado.getId());
-        dto.setNombre(perfilActualizado.getNombre());
-        dto.setApellido(perfilActualizado.getApellido());
-        dto.setUbicacion(perfilActualizado.getUbicacion());
-        dto.setImagen(perfilActualizado.getImagen());
-        dto.setEmail(perfilActualizado.getUsuario().getEmail());
-        dto.setUsername(perfilActualizado.getUsuario().getUsername());
-        dto.setPassword(perfilActualizarDTO.getPassword());
-
-        return dto;
-    }
 
     public PerfilActualizarDTO getActualizadoById(Long id) {
         Perfil perfil = perfilRepository.findById(id)

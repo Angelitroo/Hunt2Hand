@@ -9,15 +9,14 @@ import lombok.Data;
 @Builder
 public class RegistroDTO {
 
-    //TABLA PERFIL
     private String nombre;
     private String apellido;
     private String ubicacion;
-    private Boolean activado = false;
-    private boolean baneado = false;
     private String imagen;
 
-    // TABLA USUARIO
+    private Boolean activado = false;
+    private Boolean baneado = false;
+
     @NotBlank(message = "El nombre de usuario no puede estar vacío.")
     private String email;
     private String username;
@@ -25,6 +24,10 @@ public class RegistroDTO {
     private Rol rol = Rol.USER;
 
     public boolean isActivado() {
-        return activado != null && activado;
+        return Boolean.TRUE.equals(activado);
+    }
+
+    public boolean isBaneado() {
+        return Boolean.TRUE.equals(baneado);
     }
 }

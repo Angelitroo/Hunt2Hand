@@ -57,29 +57,30 @@ public class UsuarioService implements UserDetailsService {
         if (usuarioRepository.findTopByUsername(dto.getUsername()).isPresent()) {
             throw new IllegalArgumentException("El nombre de usuario '" + dto.getUsername() + "' ya está en uso.");
         }
-
         Usuario nuevoUsuario = new Usuario();
         nuevoUsuario.setEmail(dto.getEmail());
         nuevoUsuario.setUsername(dto.getUsername());
         nuevoUsuario.setPassword(passwordEncoder.encode(dto.getPassword()));
         nuevoUsuario.setRol(dto.getRol());
 
+        Usuario usuarioGuardado = usuarioRepository.save(nuevoUsuario);
+
         PerfilDTO perfilDTO = new PerfilDTO();
         perfilDTO.setNombre(dto.getNombre());
         perfilDTO.setApellido(dto.getApellido());
         perfilDTO.setUbicacion(dto.getUbicacion());
         perfilDTO.setImagen(dto.getImagen());
-        perfilDTO.setBaneado(dto.isBaneado());
-        perfilDTO.setActivado(dto.isActivado());
-
-        Usuario usuarioGuardado = usuarioRepository.save(nuevoUsuario);
+        perfilDTO.setBaneado(false);
+        perfilDTO.setActivado(false);
         perfilDTO.setUsuario(usuarioGuardado.getId());
+
         perfilService.guardar(perfilDTO, usuarioGuardado.getId());
 
-        enviarEmailBienvenida(nuevoUsuario.getEmail(), nuevoUsuario.getUsername());
+        enviarEmailBienvenida(usuarioGuardado.getEmail(), usuarioGuardado.getUsername());
 
         return usuarioGuardado;
     }
+
 
     public void activarCuenta(String token) {
         String username = resetTokens.get(token);

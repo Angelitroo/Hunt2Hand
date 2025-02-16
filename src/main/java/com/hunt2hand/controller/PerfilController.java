@@ -1,5 +1,6 @@
 package com.hunt2hand.controller;
 
+import com.hunt2hand.dto.BanearPerfilDTO;
 import com.hunt2hand.dto.PerfilActualizarDTO;
 import com.hunt2hand.dto.PerfilDTO;
 import com.hunt2hand.dto.SeguirDTO;
@@ -69,13 +70,13 @@ public class PerfilController {
         }
     }
 
-    @PutMapping("/banear/{id}")
-    public ResponseEntity<String> banear(@PathVariable Long id) {
+    @PutMapping("/banear")
+    public ResponseEntity<PerfilDTO> banear(@RequestBody BanearPerfilDTO banearPerfilDTO) {
         try {
-            perfilService.banear(id);
-            return ResponseEntity.ok("Perfil baneado exitosamente");
+            PerfilDTO perfilDTO = perfilService.banear(banearPerfilDTO);
+            return ResponseEntity.ok(perfilDTO);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
 
