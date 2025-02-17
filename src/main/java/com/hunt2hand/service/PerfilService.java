@@ -1,9 +1,6 @@
 package com.hunt2hand.service;
 
-import com.hunt2hand.dto.BanearPerfilDTO;
-import com.hunt2hand.dto.PerfilActualizarDTO;
-import com.hunt2hand.dto.PerfilDTO;
-import com.hunt2hand.dto.SeguirDTO;
+import com.hunt2hand.dto.*;
 import com.hunt2hand.exception.RecursoNoEncontrado;
 import com.hunt2hand.model.Perfil;
 import com.hunt2hand.model.Seguidores;
@@ -151,7 +148,6 @@ public class PerfilService {
         favoritosService.eliminarFavoritosByPerfil(id);
         mensajeService.eliminarMensajesByPerfil(id);
         chatService.eliminarChatByPerfil(id);
-        reporteService.eliminarReportesByPerfil(id);
         resenaService.eliminarResenaByPerfil(id);
         eliminarSeguidoresByPerfil(id);
         productoService.eliminarProductoByPerfil(id);
@@ -168,6 +164,25 @@ public class PerfilService {
 
         eliminarPorBan(banearPerfilDTO.getIdPerfil());
         enviarEmailBaneado(perfil.getUsuario().getEmail(), perfil.getUsuario().getUsername(), banearPerfilDTO.getMotivo());
+
+        PerfilDTO dto = new PerfilDTO();
+        dto.setId(perfil.getId());
+        dto.setNombre(perfil.getNombre());
+        dto.setApellido(perfil.getApellido());
+        dto.setUbicacion(perfil.getUbicacion());
+        dto.setImagen(perfil.getImagen());
+        dto.setBaneado(perfil.isBaneado());
+        dto.setUsuario(perfil.getUsuario().getId());
+
+        return dto;
+    }
+
+    public PerfilDTO desbanear(DesbanearPerfilDTO desbanearPerfilDTO) {
+        Perfil perfil = perfilRepository.findById(desbanearPerfilDTO.getIdPerfil())
+                .orElseThrow(() -> new RecursoNoEncontrado("Perfil con id " + desbanearPerfilDTO.getIdPerfil() + " no encontrado"));
+
+        perfil.setBaneado(false);
+        perfilRepository.save(perfil);
 
         PerfilDTO dto = new PerfilDTO();
         dto.setId(perfil.getId());
