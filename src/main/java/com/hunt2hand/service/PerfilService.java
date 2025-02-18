@@ -47,6 +47,7 @@ public class PerfilService {
                     dto.setUbicacion(perfil.getUbicacion());
                     dto.setImagen(perfil.getImagen());
                     dto.setBaneado(perfil.isBaneado());
+                    dto.setUsuario(perfil.getUsuario().getId());
                     return dto;
                 })
                 .collect(Collectors.toList());

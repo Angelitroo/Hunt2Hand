@@ -45,9 +45,17 @@ public class UsuarioService implements UserDetailsService {
                 new RecursoNoEncontrado("Usuario no encontrado con el nombre: " + username));
     }
 
-    public Usuario obtenerUsuarioPorId(Long id) {
-        return usuarioRepository.findById(id).orElseThrow(() ->
+    public UsuarioDTO obtenerUsuarioPorId(Long id) {
+        Usuario usuario = usuarioRepository.findById(id).orElseThrow(() ->
                 new RecursoNoEncontrado("Usuario no encontrado con el id: " + id));
+
+        UsuarioDTO usuarioDTO = new UsuarioDTO();
+        usuarioDTO.setId(usuario.getId());
+        usuarioDTO.setUsername(usuario.getUsername());
+        usuarioDTO.setEmail(usuario.getEmail());
+        usuarioDTO.setRol(usuario.getRol().name());
+
+        return usuarioDTO;
     }
 
     public Usuario registrarUsuario(RegistroDTO dto) {
