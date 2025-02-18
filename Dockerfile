@@ -1,4 +1,4 @@
-FROM openjdk:23-jdk-alpine
+FROM openjdk:23-jdk
 
 WORKDIR /app
 
