@@ -18,4 +18,4 @@ COPY src/ src/
 
 EXPOSE 8080
 
-CMD ["java", "-jar", "target/Hunt2Hand-0.0.1-SNAPSHOT.jar"]
+CMD ["java", "-jar", "./Hunt2Hand-0.0.1-SNAPSHOT.jar"]
