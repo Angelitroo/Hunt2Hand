@@ -1,13 +1,15 @@
-FROM amazoncorretto:23-alpine-jdk
+FROM amazoncorretto:23
 
 WORKDIR /app
 
 COPY .mvn/ .mvn/
-COPY mvnw mvnw.cmd pom.xml ./
+COPY mvnw mvnw
+COPY pom.xml .
 
 RUN chmod +x mvnw
 
-RUN ./mvnw dependency:resolve dependency:go-offline
+RUN ls -l /app
+RUN ./mvnw dependency:resolve dependency:go-offline -X
 
 COPY src/ src/
 
