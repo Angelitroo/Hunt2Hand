@@ -1,27 +1,12 @@
-FROM amazoncorretto:23
+FROM openjdk:23-jdk-slim
 
 WORKDIR /app
 
-RUN yum update -y && yum install -y tar
-
-RUN tar --version
-RUN ls -l /app
-
-COPY .mvn/ .mvn/
-COPY mvnw mvnw
 COPY pom.xml .
 
-RUN chmod +x mvnw
+COPY src ./src
 
-RUN ls -l /app
-
-RUN ./mvnw dependency:resolve -X
-
-COPY src/ src/
-
-RUN ./mvnw clean package -DskipTests
-
-RUN ls -l target/
+RUN ./mvnw package -DskipTests
 
 EXPOSE 8080
 
