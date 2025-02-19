@@ -2,7 +2,7 @@ FROM amazoncorretto:23
 
 WORKDIR /app
 
-RUN yum install -y tar
+RUN yum install -y tar gzip
 
 COPY .mvn/ .mvn/
 COPY mvnw mvnw
