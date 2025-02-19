@@ -3,6 +3,7 @@ package com.hunt2hand.controller;
 import com.hunt2hand.dto.MensajeDTO;
 import com.hunt2hand.service.MensajeService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,6 +13,7 @@ import java.util.List;
 @RequestMapping("/mensaje")
 @RequiredArgsConstructor
 public class MensajeController {
+    @Autowired
     private final MensajeService mensajeService;
 
     @PostMapping("/enviar")

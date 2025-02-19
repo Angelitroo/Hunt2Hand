@@ -4,6 +4,7 @@ import com.hunt2hand.dto.ChatDTO;
 import com.hunt2hand.dto.CrearChatDTO;
 import com.hunt2hand.service.ChatService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,6 +14,7 @@ import java.util.List;
 @RequestMapping("/chat")
 @RequiredArgsConstructor
 public class ChatController {
+    @Autowired
     private final ChatService chatService;
 
     @PostMapping("/crear")

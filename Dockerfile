@@ -1,9 +1,10 @@
-FROM openjdk:23-jdk
+FROM openjdk:17-jdk-slim
 
 WORKDIR /app
 
 COPY .mvn/ .mvn/
-COPY mvnw mvnw.cmd pom.xml ./
+COPY mvnw mvnw
+COPY pom.xml .
 
 RUN chmod +x mvnw
 
