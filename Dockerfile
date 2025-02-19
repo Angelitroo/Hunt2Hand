@@ -8,7 +8,8 @@ COPY pom.xml .
 
 RUN chmod +x mvnw
 
-RUN ./mvnw dependency:resolve dependency:go-offline
+RUN ls -l /app
+RUN ./mvnw dependency:resolve dependency:go-offline -X
 
 COPY src/ src/
 
