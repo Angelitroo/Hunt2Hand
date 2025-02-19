@@ -25,8 +25,6 @@ public class Chat {
     private Perfil receptor;
 
 
-    public Chat() {
-
-    }
+    public Chat() {}
 }
 
