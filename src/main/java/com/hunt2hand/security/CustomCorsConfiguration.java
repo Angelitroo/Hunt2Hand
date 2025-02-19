@@ -13,7 +13,7 @@ public class CustomCorsConfiguration  {
     @Bean
     public CorsFilter corsFilter() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.addAllowedOriginPattern("https://hunt2handfront.onrender.com");
+        corsConfiguration.addAllowedOriginPattern("*");
         corsConfiguration.addAllowedMethod("*"); // Permitir todos los métodos (GET, POST, etc.)
         corsConfiguration.addAllowedHeader("*"); // Permitir todos los encabezados
         corsConfiguration.setAllowCredentials(true); // Si usas cookies o sesiones
