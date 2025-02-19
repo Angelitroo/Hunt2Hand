@@ -2,6 +2,8 @@ FROM openjdk:23-jdk-slim
 
 WORKDIR /app
 
+COPY .mvn/ .mvn
+COPY mvnw .
 COPY pom.xml .
 
 COPY src ./src
