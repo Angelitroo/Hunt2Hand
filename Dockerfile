@@ -16,8 +16,6 @@ RUN ./mvnw clean dependency:resolve -X
 
 COPY src/ src/
 
-RUN ./mvnw clean package -DskipTests
-
 RUN ls -l target/
 
 EXPOSE 8080
