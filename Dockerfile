@@ -1,20 +1,19 @@
-FROM amazoncorretto:23
+FROM amazoncorretto:17-alpine-jdk
 
 WORKDIR /app
 
-RUN yum install -y tar gzip
-
 COPY .mvn/ .mvn/
-COPY mvnw mvnw
-COPY pom.xml .
+COPY mvnw mvnw.cmd pom.xml ./
 
 RUN chmod +x mvnw
 
-RUN ls -l /app
-
-RUN ./mvnw clean dependency:resolve -X
+RUN ./mvnw dependency:resolve dependency:go-offline
 
 COPY src/ src/
+
+RUN ./mvnw clean package -DskipTests
+
+RUN ls -l target/
 
 EXPOSE 8080
 
