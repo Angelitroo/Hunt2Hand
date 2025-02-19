@@ -4,7 +4,7 @@ WORKDIR /app
 
 RUN yum update -y && yum install -y tar
 
-RUN which tar
+RUN tar --version
 RUN ls -l /app
 
 COPY .mvn/ .mvn/
