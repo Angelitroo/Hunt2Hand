@@ -2,6 +2,8 @@ FROM amazoncorretto:23
 
 WORKDIR /app
 
+RUN yum install -y tar
+
 COPY .mvn/ .mvn/
 COPY mvnw mvnw
 COPY pom.xml .
