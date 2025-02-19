@@ -17,4 +17,4 @@ RUN ls -l target/
 
 EXPOSE 8080
 
-CMD ["java", "-jar", "target/safajobs-0.0.1-SNAPSHOT.jar"]
+CMD ["java", "-jar", "target/Hunt2Hand-0.0.1-SNAPSHOT.jar"]
