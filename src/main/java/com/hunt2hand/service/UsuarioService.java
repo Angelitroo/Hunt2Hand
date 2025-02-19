@@ -150,7 +150,7 @@ public class UsuarioService implements UserDetailsService {
             Usuario usuario = usuarioOptional.get();
             String token = jwtService.generateToken(usuario);
 
-            String activationLink = "http://localhost:4200/activar-cuenta?token=" + token;
+            String activationLink = "https://hunt2hand.onrender.com/activar-cuenta?token=" + token;
             String emailContent = "<html>" +
                     "<body style=\"padding: 20px; font-family: Arial, sans-serif;\">" +
                     "<div style=\"max-width: 600px; margin: auto; background: #e6a1f1; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);\">" +
@@ -162,7 +162,7 @@ public class UsuarioService implements UserDetailsService {
                     "<p>Gracias.</p>" +
                     "<p>El equipo de Hunt2Hand</p>" +
                     "<hr>" +
-                    "<p><small>Visita nuestra <a href=\"http://localhost:4200/ayuda\">página de ayuda</a> para más información.</small></p>" +
+                    "<p><small>Visita nuestra <a href=\"https://hunt2hand.onrender.com/ayuda\">página de ayuda</a> para más información.</small></p>" +
                     "</div>" +
                     "</body>" +
                     "</html>";
@@ -181,7 +181,7 @@ public class UsuarioService implements UserDetailsService {
             resetTokens.put(token, usuario.getUsername());
             tokenExpiryDates.put(token, LocalDateTime.now().plusHours(1));
 
-            String resetLink = "http://localhost:4200/restablecer-contrasena?token=" + token;
+            String resetLink = "https://hunt2hand.onrender.com/restablecer-contrasena?token=" + token;
             String emailContent = "<html>" +
                     "<body style=\"padding: 20px; font-family: Arial, sans-serif;\">" +
                     "<div style=\"max-width: 600px; margin: auto; background: #e6a1f1; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);\">" +
@@ -193,7 +193,7 @@ public class UsuarioService implements UserDetailsService {
                     "<p>Gracias.</p>" +
                     "<p>El equipo de Hunt2Hand</p>" +
                     "<hr>" +
-                    "<p><small>Al hacer clic en el botón, aceptas nuestros <a href=\"http://localhost:4200/terminos\">Términos de Servicio</a> y <a href=\"http://localhost:4200/privacidad\">Política de Privacidad</a>.</small></p>" +
+                    "<p><small>Al hacer clic en el botón, aceptas nuestros <a href=\"https://hunt2hand.onrender.com/terminos\">Términos de Servicio</a> y <a href=\"http://localhost:4200/privacidad\">Política de Privacidad</a>.</small></p>" +
                     "</div>" +
                     "</body>" +
                     "</html>";
