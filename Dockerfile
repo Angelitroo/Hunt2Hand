@@ -16,8 +16,6 @@ RUN ./mvnw clean dependency:resolve -X
 
 COPY src/ src/
 
-RUN ls -l target/
-
 EXPOSE 8080
 
 CMD ["java", "-jar", "target/Hunt2Hand-0.0.1-SNAPSHOT.jar"]
