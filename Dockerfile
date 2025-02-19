@@ -4,6 +4,9 @@ WORKDIR /app
 
 RUN yum update -y && yum install -y tar
 
+RUN which tar
+RUN ls -l /app
+
 COPY .mvn/ .mvn/
 COPY mvnw mvnw
 COPY pom.xml .
@@ -11,7 +14,8 @@ COPY pom.xml .
 RUN chmod +x mvnw
 
 RUN ls -l /app
-RUN ./mvnw dependency:resolve dependency:go-offline -X
+
+RUN ./mvnw dependency:resolve -X
 
 COPY src/ src/
 
